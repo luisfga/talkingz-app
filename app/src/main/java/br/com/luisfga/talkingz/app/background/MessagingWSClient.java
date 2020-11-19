@@ -31,7 +31,7 @@ import br.com.luisfga.talkingz.commons.orchestration.OrchestrationEncoder;
 public class MessagingWSClient {
 
 //    private final String SERVER_ENDPOINT_URI = "wss://192.168.0.7:8443/talkingzapp/MessagingWSEndpoint";
-    private final String SERVER_ENDPOINT_URI = "ws://talkingzapp-server.herokuapp.com/MessagingWSEndpoint";
+    private final String SERVER_ENDPOINT_URI = "ws://talkingz.herokuapp.com/MessagingWSEndpoint";
 
     private final String TAG = "MessagingWSClient";
     private Session userSession = null;
