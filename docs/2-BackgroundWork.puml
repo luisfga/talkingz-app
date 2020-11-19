@@ -1,0 +1,21 @@
+@startuml
+participant AndroidOS order 1
+participant BroadcastReceiver order 2
+participant ConnectionService order 3
+participant RemoteWebSocket order 4
+
+note over AndroidOS
+BOOT
+end note
+
+AndroidOS -> BroadcastReceiver: throw broadcast
+BroadcastReceiver -> AndroidOS: startService()
+AndroidOS -> ConnectionService: start
+ConnectionService -> RemoteWebSocket: create and retain connection
+
+note over ConnectionService
+Now there'll be a static
+WebSocketClient to be
+used system-wide
+end note
+@enduml

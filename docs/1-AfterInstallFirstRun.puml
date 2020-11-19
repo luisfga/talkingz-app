@@ -1,0 +1,19 @@
+@startuml
+
+participant App order 1
+participant Database order 2
+participant RemoteWebSocket order 3
+
+App -> RemoteWebSocket : NewUserID Request
+note left
+At first run, after install,
+there is no local user
+end note
+RemoteWebSocket --> App: NewUserID Response
+
+App -> Database: Save New User()
+note left
+Now, we are ready to go
+end note
+@enduml
+

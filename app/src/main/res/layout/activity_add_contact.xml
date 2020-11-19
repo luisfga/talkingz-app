@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textAlignment="center"
+            style="@style/TextAppearance.AppCompat.Title"
+            android:text="Adicionar Contato"
+            android:textColor="@android:color/white"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Informe o token do contato"
+                android:textAlignment="center"
+                android:inputType="textEmailAddress"
+                android:textCursorDrawable="@drawable/input_custom_cursor"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:background="@drawable/custom_bg"/>
+
+            <LinearLayout
+                android:id="@+id/validationErrorPanel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/input"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/validationErrorMessage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Por favor, digite o token do contato"
+                    android:textAlignment="center"/>
+
+                <ImageView
+                    android:layout_marginStart="10dp"
+                    android:id="@+id/validationErrorImage"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@drawable/ic_resp_failure"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/responsePanel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="20dp">
+
+            <ProgressBar
+                android:id="@+id/responseProgressBar"
+                android:indeterminateDrawable="@drawable/progress_animation"
+                android:layout_height="100dp"
+                android:layout_width="100dp"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/responseIcon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_resp_success"
+                android:scaleType="centerCrop"
+                android:layout_below="@+id/responseProgressBar"
+                android:visibility="gone"/>
+
+            <TextView
+                android:id="@+id/responseMessage"
+                android:layout_marginTop="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Solicitação de resposta do usuário"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/responseIcon"
+                android:textAlignment="center"
+                android:textStyle="bold"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/responseButton"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_background"
+                android:text="Retry / Confirm"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/responseMessage"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
+
+            <Button
+                android:id="@+id/negativeButton"
+                android:layout_width="0.0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button_background"
+                android:text="Cancelar"
+                android:textAllCaps="false"
+                android:textColor="@android:color/black"/>
+
+            <Button
+                android:id="@+id/positiveButton"
+                android:layout_width="1.0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/button_background"
+                android:textAllCaps="false"
+                android:text="Buscar"
+                android:textColor="@android:color/black"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

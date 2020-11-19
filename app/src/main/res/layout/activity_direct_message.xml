@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="br.com.luisfga.talkingz.app.ui.directmessage.DirectMessageActivity"
+    android:background="@drawable/chat_background"
+    android:animateLayoutChanges="true">
+
+    <RelativeLayout
+        android:id="@+id/title_panel"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/contact_thumbnail"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_person"/>
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:text="Nome do Contato"
+            android:layout_marginStart="20dp"
+            android:textSize="20dp"
+            android:layout_toEndOf="@+id/contact_thumbnail"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/msgs_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal"
+        android:layout_below="@id/title_panel"
+        android:layout_above="@id/action_panel"/>
+
+    <LinearLayout
+        android:id="@+id/action_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/custom_bg"
+        android:layout_alignParentBottom="true">
+
+        <ImageButton
+            android:id="@+id/emo_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_emoticon"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"/>
+
+        <EditText
+            android:id="@+id/msg_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Digite aqui"
+            android:inputType="textNoSuggestions|textCapSentences|textMultiLine"
+            android:imeOptions="normal"
+            android:maxLines="7" />
+
+        <ImageButton
+            android:id="@+id/attach_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_attach_file"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/mic_button"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_mic"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/send_button"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_send"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</RelativeLayout>

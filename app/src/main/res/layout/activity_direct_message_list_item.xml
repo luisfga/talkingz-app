@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/direct_message_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/direct_message_header_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 de Junho de 2020"
+            android:textColor="@color/black"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:background="@drawable/custom_background_1"
+            android:visibility="visible"/>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/direct_message_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bubble_l"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
+                    <ImageView
+                        android:id="@+id/direct_message_media"
+                        android:layout_width="250dp"
+                        android:layout_height="250dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/bolsovader"/>
+                    <ImageView
+                        android:id="@+id/direct_message_media_play_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@android:drawable/ic_media_play"
+                        android:background="@drawable/custom_bg_circle"
+                        android:backgroundTint="@color/lightGray"
+                        android:layout_gravity="center"
+                        android:visibility="gone"/>
+                </FrameLayout>
+
+
+
+                <TextView
+                    android:id="@+id/direct_message_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Título qualquer descritivo. Aqui haverá bastante texto. Todas as mensagens serão colocadas nessa caixa de texto, e o sistema cuidará do redimensionamento da mesma."
+                    android:textColor="@color/textPrimary"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:id="@+id/direct_message_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0:00"
+                    android:textSize="12sp"
+                    android:drawableEnd="@drawable/ic_check_12dp"
+                    android:drawablePadding="5dp"
+                    android:layout_gravity="end"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>
