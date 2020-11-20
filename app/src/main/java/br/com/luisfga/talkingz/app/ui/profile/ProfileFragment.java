@@ -93,7 +93,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
                 mainUser.setEmail(email.getText().toString());
                 mainUser.setSearchToken(token.getText().toString());
 
-                AppDefaultExecutor.getOrchestraNormalPriorityThread().execute(() -> getOrchestraApp().getOrchestraDB().userDAO().update(mainUser));
+                AppDefaultExecutor.getOrchestraNormalPriorityThread().execute(() -> getOrchestraApp().getTalkingzDB().userDAO().update(mainUser));
 
                 syncronizeMainUser(mainUser);
             }

@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import br.com.luisfga.talkingz.app.database.OrchestraClientRoomDatabase;
+import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.dao.UserDAO;
 import br.com.luisfga.talkingz.app.database.entity.user.User;
 
@@ -20,7 +20,7 @@ public class ContactsRepository {
     // See the BasicSample in the android-architecture-components repository at
     // https://github.com/googlesamples
     public ContactsRepository(Application application) {
-        OrchestraClientRoomDatabase db = OrchestraClientRoomDatabase.getDatabase(application);
+        TalkingzClientRoomDatabase db = TalkingzClientRoomDatabase.getDatabase(application);
         this.userDAO = db.userDAO();
         mAllContacts = this.userDAO.listAllContacts();
     }
@@ -34,15 +34,15 @@ public class ContactsRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insert(User contact) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.insert(contact));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.insert(contact));
     }
 
     public void update(User contact) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.update(contact));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.update(contact));
     }
 
     public void delete(User contact) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.delete(contact));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.userDAO.delete(contact));
     }
 
 }

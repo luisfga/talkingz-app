@@ -23,8 +23,8 @@ public class NetworkStateChangeBroadcastReceiver extends BroadcastReceiver {
 
         Log.println(Log.INFO, TAG, "Recepção de broadcast");
 
-        Intent coreServiceIntent = new Intent(context, OrchestraCoreService.class);
-        intent.setAction(OrchestraCoreService.NETWORK_STATE_CHANGED_START);
+        Intent coreServiceIntent = new Intent(context, TalkingzService.class);
+        intent.setAction(TalkingzService.NETWORK_STATE_CHANGED_START);
         if (isInternetAvailable()) {
             Log.println(Log.INFO, TAG, "Conexão com a internet restabelecida - Iniciando OrchestraCoreService");
             context.startService(coreServiceIntent);
@@ -53,7 +53,7 @@ public class NetworkStateChangeBroadcastReceiver extends BroadcastReceiver {
     }
 
     private void startOrchestraCoreService(Context context, String action) {
-        Intent broadcastServiceStart = new Intent(context, OrchestraCoreService.class);
+        Intent broadcastServiceStart = new Intent(context, TalkingzService.class);
         broadcastServiceStart.setAction(action);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             context.startForegroundService(broadcastServiceStart);

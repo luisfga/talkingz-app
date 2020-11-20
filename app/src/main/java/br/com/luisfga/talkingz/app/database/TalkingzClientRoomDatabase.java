@@ -26,7 +26,7 @@ import br.com.luisfga.talkingz.app.database.entity.user.User;
         GroupMessage.class,
         UserGroupJoin.class}, version = 1, exportSchema = false)
 @TypeConverters({Converters.class})
-public abstract class OrchestraClientRoomDatabase extends RoomDatabase {
+public abstract class TalkingzClientRoomDatabase extends RoomDatabase {
 
     public abstract UserDAO userDAO();//MainUser and Contacts
     public abstract GroupDAO groupDAO();
@@ -35,9 +35,9 @@ public abstract class OrchestraClientRoomDatabase extends RoomDatabase {
     /**
      * DO NOT USE THIS, UNLESS YOU KNOW WHAT YOU ARE DOING
      */
-    private static volatile OrchestraClientRoomDatabase THREAD_UNSAFE_DANGEROUS_INSTANCE;
+    private static volatile TalkingzClientRoomDatabase THREAD_UNSAFE_DANGEROUS_INSTANCE;
 
-    private static volatile OrchestraClientRoomDatabase INSTANCE;
+    private static volatile TalkingzClientRoomDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
     private static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
@@ -45,12 +45,12 @@ public abstract class OrchestraClientRoomDatabase extends RoomDatabase {
         return databaseWriteExecutor;
     }
 
-    public static OrchestraClientRoomDatabase getDatabase(final Context context) {
+    public static TalkingzClientRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
-            synchronized (OrchestraClientRoomDatabase.class) {
+            synchronized (TalkingzClientRoomDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            OrchestraClientRoomDatabase.class, "orchestraclient_database")
+                            TalkingzClientRoomDatabase.class, "orchestraclient_database")
                             .build();
                 }
             }

@@ -6,17 +6,17 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import br.com.luisfga.talkingz.app.background.OrchestraApp;
+import br.com.luisfga.talkingz.app.background.TalkinzApp;
 
 @SuppressLint("Registered")
 public abstract class OrchestraAbstractRootActivity extends AppCompatActivity {
 
-    protected OrchestraApp orchestraApp;
+    protected TalkinzApp talkinzApp;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        orchestraApp = (OrchestraApp) getApplication();
+        talkinzApp = (TalkinzApp) getApplication();
     }
 }

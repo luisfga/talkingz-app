@@ -1,6 +1,10 @@
 package br.com.luisfga.talkingz.app.background;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import java.net.InetAddress;
@@ -9,7 +13,9 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.luisfga.talkingz.app.database.OrchestraClientRoomDatabase;
+import android.widget.Toast;
+import androidx.annotation.WorkerThread;
+import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
 import br.com.luisfga.talkingz.app.database.entity.user.User;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
@@ -29,42 +35,82 @@ import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGet
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseDispatcher;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
 
-public class OrchestraApp extends Application
-        implements MessagingWSClient.OrchestraMessageHandler, ResponseDispatcher{
+/**
+ * @author luisfga
+ */
+public class TalkinzApp extends Application implements MessagingWSClient.OrchestraMessageHandler, ResponseDispatcher{
 
     private final String TAG = "OrchestraApp";
 
-    private OrchestraClientRoomDatabase orchestraDB;
+    //BANCO DE DADOS
+    public TalkingzClientRoomDatabase getTalkingzDB() {
+        return TalkingzClientRoomDatabase.getDatabase(this);
+    }
 
+    //USUÁRIO
     private User mainUser;
-
-    private MessagingWSClient orchestraWSClient;
-
-    private FileTransferWSClient fileTransferWSClient;
-
-    /* -----------------------------------------------*/
-    /* -------------- MÉTODOS PÚBLICOS ---------------*/
-    /* -----------------------------------------------*/
     public User getMainUser() {
         return mainUser;
     }
 
-    public void setMainUser(User mainUser) {
-        this.mainUser = mainUser;
-    }
-
-    public OrchestraClientRoomDatabase getOrchestraDB() {
-        if (orchestraDB == null)
-            orchestraDB = OrchestraClientRoomDatabase.getDatabase(this);
-        return orchestraDB;
-    }
+    //WEBSOCKET para mensagens
+    private MessagingWSClient messagingWSClient;
     public MessagingWSClient getWsClient() {
-        return this.orchestraWSClient;
+        return this.messagingWSClient;
     }
 
-    public void conectar() {
-        this.orchestraWSClient = MessagingWSClient.getIntansce(this);
-        this.orchestraWSClient.conectar(this.getApplicationContext(), this.mainUser.getId().toString());
+    //WEBSOCKET para transferência de arquivos
+    private FileTransferWSClient fileTransferWSClient;
+
+    /* -----------------------------------------------*/
+    /* ----------- CONFIG AND INITIALIZATION ---------*/
+    /* -----------------------------------------------*/
+    @WorkerThread
+    private void refreshSchedules(){
+        //set 'alarm' to trigger call on TalkingzBroadcastReceiver
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent broadcastReceiverIntent = new Intent(this, TalkingzBroadcastReceiver.class);
+        broadcastReceiverIntent.setAction(TalkingzBroadcastReceiver.ACTION_TALKINGZ_KEEP_ALIVE_PING);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, broadcastReceiverIntent, 0);
+        alarmManager.setExact(AlarmManager.RTC,System.currentTimeMillis()+TalkingzBroadcastReceiver.INTERVAL, pendingIntent);
+    }
+
+    @WorkerThread
+    private void loadUser() {
+
+            mainUser = getTalkingzDB().userDAO().getMainUser();
+
+            if (mainUser == null) {
+                mainUser = new User();
+                mainUser.setMainUser(true);
+                mainUser.setId(UUID.randomUUID());
+                mainUser.setName("");
+                mainUser.setEmail("");
+                mainUser.setSearchToken("");
+                mainUser.setJoinTime(System.currentTimeMillis());
+
+                getTalkingzDB().userDAO().insert(mainUser);
+
+                Toast.makeText(this, "Novo usuário criado: " + mainUser.getId().toString(), Toast.LENGTH_LONG).show();
+            }
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
+            loadUser();
+            refreshSchedules();
+//        connect();
+        });
+    }
+
+    /* -----------------------------------------------*/
+    /* -------------- MÉTODOS PÚBLICOS ---------------*/
+    /* -----------------------------------------------*/
+    public void connect() {
+        this.messagingWSClient = MessagingWSClient.getIntansce(this);
+        this.messagingWSClient.conectar(this.getApplicationContext(), this.mainUser.getId().toString());
     }
 
     public boolean isInternetAvailable() {
@@ -82,7 +128,6 @@ public class OrchestraApp extends Application
     /* -----------------------------------------------*/
     /* -------------- MESSAGE HANDLER API ------------*/
     /* -----------------------------------------------*/
-
     public boolean isConnectionOpen() {
         return MessagingWSClient.isConnectionOpen();
     }
@@ -92,8 +137,8 @@ public class OrchestraApp extends Application
         Log.println(Log.INFO, TAG, "onConnectionOpen");
 
         if (getMainUser() != null) {
-            //enviar pendências TODO ver um bug que tenta enviar de novo uma mensagem entregue
-            List<DirectMessage> pendentesDeEnvio = orchestraDB.directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
+            //enviar pendências
+            List<DirectMessage> pendentesDeEnvio = getTalkingzDB().directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
             Log.println(Log.INFO, TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
             for (DirectMessage directMessage: pendentesDeEnvio) {
 
@@ -111,7 +156,7 @@ public class OrchestraApp extends Application
                 commandSend.setMessageWrapper(messageWrapper);
 
                 Log.println(Log.INFO, TAG, "enviando mensagem");
-                this.orchestraWSClient.sendCommandOrFeedBack(commandSend);
+                this.messagingWSClient.sendCommandOrFeedBack(commandSend);
 
                 //enviar arquivo de mídia, se for o caso
                 if (directMessage.getMediaUriPath() != null) {
@@ -142,8 +187,6 @@ public class OrchestraApp extends Application
         Log.println(Log.INFO, TAG, errorMessage);
         MessagingWSClient.clear();
     }
-
-
 
     @Override
     public void onMessage(Orchestration orchestration) {
@@ -176,9 +219,8 @@ public class OrchestraApp extends Application
     /* -----------------------------------------------*/
     /* ------ MESSAGE HANDLING PRIVATE METHODS -------*/
     /* -----------------------------------------------*/
-
     private void processFeedBackCommandSend(FeedBackCommandSend feedBackCommandSend) {
-        orchestraDB.directMessageDAO().updateAfterFeedBack(
+        getTalkingzDB().directMessageDAO().updateAfterFeedBack(
                 feedBackCommandSend.getId(),
                 new Timestamp(feedBackCommandSend.getSentTimeInMillis()),
                 MessageStatus.MSG_STATUS_ON_TRAFFIC);
@@ -186,14 +228,14 @@ public class OrchestraApp extends Application
     }
 
     private void processCommandConfirmDelivery(CommandConfirmDelivery commandConfirmDelivery) {
-        orchestraDB.directMessageDAO().updateMessageStatus(commandConfirmDelivery.getId(), MessageStatus.MSG_STATUS_DELIVERED);
+        getTalkingzDB().directMessageDAO().updateMessageStatus(commandConfirmDelivery.getId(), MessageStatus.MSG_STATUS_DELIVERED);
 
         Log.println(Log.INFO, TAG, "Confirmação recebida da mensagem: " + commandConfirmDelivery.getId());
 
         FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
         feedBackCommandConfirmDelivery.setId(commandConfirmDelivery.getId());
         Log.println(Log.INFO, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
-        this.orchestraWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
+        this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
     }
 
     private void processFeedBackCommandOnLogin(FeedBackCommandLogin feedBackCommandLogin) {
@@ -213,24 +255,24 @@ public class OrchestraApp extends Application
             directMessage.setMediaThumbnail(messageWrapper.getMediaThumbnail());
 
             directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
-            orchestraDB.directMessageDAO().insert(directMessage);
+            getTalkingzDB().directMessageDAO().insert(directMessage);
             Log.println(Log.INFO, TAG, "Mensagem recebida: " + directMessage.getContent());
 
             FeedBackCommandDeliver feedBackMessageReceived = new FeedBackCommandDeliver();
             feedBackMessageReceived.setSenderId(directMessage.getSenderId());
             feedBackMessageReceived.setId(directMessage.getId());
             Log.println(Log.INFO, TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
-            this.orchestraWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
+            this.messagingWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
         }
 
         for (UUID uuid : feedBackCommandLogin.getPendingConfirmationUUIDs()) {
-            orchestraDB.directMessageDAO().updateMessageStatus(uuid, MessageStatus.MSG_STATUS_DELIVERED);
+            getTalkingzDB().directMessageDAO().updateMessageStatus(uuid, MessageStatus.MSG_STATUS_DELIVERED);
 
             FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
             feedBackCommandConfirmDelivery.setId(uuid);
 
             Log.println(Log.INFO, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
-            this.orchestraWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
+            this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
         }
     }
 
@@ -248,14 +290,14 @@ public class OrchestraApp extends Application
         directMessage.setMediaThumbnail(commandDeliver.getMessageWrapper().getMediaThumbnail());
 
         directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
-        orchestraDB.directMessageDAO().insert(directMessage);
+        getTalkingzDB().directMessageDAO().insert(directMessage);
         Log.println(Log.INFO, TAG, "Mensagem recebida: " + directMessage.getContent());
 
         //send feedback
         FeedBackCommandDeliver feedBackCommandDeliver = new FeedBackCommandDeliver();
         feedBackCommandDeliver.setSenderId(directMessage.getSenderId());
         feedBackCommandDeliver.setId(directMessage.getId());
-        this.orchestraWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
+        this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
         Log.println(Log.INFO, TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
     }
 

@@ -8,8 +8,7 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
-public class OrchestraCoreService
-        extends Service {
+public class TalkingzService extends Service {
 
     public static final String APP_START = "APP_START";
     public static final String SCHEDULE_START = "SCHEDULE_START";
@@ -17,11 +16,11 @@ public class OrchestraCoreService
     public static final String NETWORK_STATE_CHANGED_START = "NETWORK_STATE_CHANGED_START";
 
     private final String TAG = "ConnectivityService";
-    private OrchestraBinder binder;
+    private TalkingzBinder binder;
 
-    public OrchestraCoreService() {
+    public TalkingzService() {
         super();
-        binder = new OrchestraBinder();
+        binder = new TalkingzBinder();
     }
 
     /* -----------------------------------------------*/
@@ -48,9 +47,9 @@ public class OrchestraCoreService
         return START_STICKY;
     }
 
-    public class OrchestraBinder extends Binder {
-        public OrchestraCoreService getService() {
-            return OrchestraCoreService.this;
+    public class TalkingzBinder extends Binder {
+        public TalkingzService getService() {
+            return TalkingzService.this;
         }
     }
 }

@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.luisfga.talkingz.app.database.OrchestraClientRoomDatabase;
+import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.dao.DirectMessageDAO;
 import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
 
@@ -25,7 +25,7 @@ public class DirectMessagesRepository {
     public DirectMessagesRepository(Application application, UUID contactId, UUID mainUserId) {
         this.application = application;
         this.mainUserId = mainUserId;
-        OrchestraClientRoomDatabase db = OrchestraClientRoomDatabase.getDatabase(application);
+        TalkingzClientRoomDatabase db = TalkingzClientRoomDatabase.getDatabase(application);
         this.directMessageDAO = db.directMessageDAO();
         mAllMessages = this.directMessageDAO.listAll(contactId);
     }
@@ -39,15 +39,15 @@ public class DirectMessagesRepository {
     // You must call this on a non-UI thread or your app will throw an exception. Room ensures
     // that you're not doing any long running operations on the main thread, blocking the UI.
     public void insert(DirectMessage directMessage) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.insert(directMessage));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.insert(directMessage));
     }
 
     public void update(DirectMessage directMessage) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.update(directMessage));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.update(directMessage));
     }
 
     public void delete(DirectMessage directMessage) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.delete(directMessage));
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> this.directMessageDAO.delete(directMessage));
     }
 
 }

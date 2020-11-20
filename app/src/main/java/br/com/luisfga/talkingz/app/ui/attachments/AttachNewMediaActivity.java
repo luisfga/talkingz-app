@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import java.io.File;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.background.OrchestraCache;
+import br.com.luisfga.talkingz.app.background.TalkingzCache;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
 import br.com.luisfga.talkingz.app.utils.FileUtility;
@@ -50,7 +50,7 @@ public class AttachNewMediaActivity extends OrchestraAbstractRootActivity {
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_IMAGE, orchestraApp.getMainUser().getId().toString()); // create a file to save the image
+            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_IMAGE, talkinzApp.getMainUser().getId().toString()); // create a file to save the image
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
             if (intent.resolveActivity(getPackageManager()) != null) {
@@ -61,7 +61,7 @@ public class AttachNewMediaActivity extends OrchestraAbstractRootActivity {
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_VIDEO, orchestraApp.getMainUser().getId().toString()); // create a file to save the image
+            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_VIDEO, talkinzApp.getMainUser().getId().toString()); // create a file to save the image
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0); // set the video image quality to low
@@ -97,7 +97,7 @@ public class AttachNewMediaActivity extends OrchestraAbstractRootActivity {
             addPhotoSendButton.setOnClickListener(v -> {
 
                 //coloca bitmap num cache pra ser recuperado na atividade de mensagem sem passar pelo java binder
-                OrchestraCache.getInstance().getLru().put("mediaThumbnail", mediaThumbnail);
+                TalkingzCache.getInstance().getLru().put("mediaThumbnail", mediaThumbnail);
 
                 //salvarDados em extras
                 Intent resultIntent = new Intent();
@@ -131,7 +131,7 @@ public class AttachNewMediaActivity extends OrchestraAbstractRootActivity {
             addPhotoSendButton.setOnClickListener(v -> {
 
                 //coloca bitmap num cache pra ser recuperado na atividade de mensagem sem passar pelo java binder
-                OrchestraCache.getInstance().getLru().put("mediaThumbnail", mediaThumbnail);
+                TalkingzCache.getInstance().getLru().put("mediaThumbnail", mediaThumbnail);
 
                 //salvarDados em extras
                 Intent resultIntent = new Intent();

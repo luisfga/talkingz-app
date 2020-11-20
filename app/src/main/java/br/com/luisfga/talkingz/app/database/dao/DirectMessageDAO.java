@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.luisfga.talkingz.app.database.OrchestraClientRoomDatabase;
+import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
 
 @Dao
@@ -26,7 +26,7 @@ public abstract class DirectMessageDAO implements BaseDAO<DirectMessage> {
 
     @Update
     public void updateAfterFeedBack(UUID uuid, Timestamp sentTime, int status) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> {
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> {
             DirectMessage directMessage = getByUUID(uuid);
             directMessage.setSentTime(sentTime);
             directMessage.setStatus(status);
@@ -36,7 +36,7 @@ public abstract class DirectMessageDAO implements BaseDAO<DirectMessage> {
 
     @Update
     public void updateMessageStatus(UUID uuid, int status) {
-        OrchestraClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> {
+        TalkingzClientRoomDatabase.getDatabaseWriteExecutor().execute(() -> {
             DirectMessage directMessage = getByUUID(uuid);
             directMessage.setStatus(status);
             update(directMessage);

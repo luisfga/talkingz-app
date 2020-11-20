@@ -2,21 +2,21 @@ package br.com.luisfga.talkingz.app.background;
 
 import android.util.LruCache;
 
-public class OrchestraCache {
+public class TalkingzCache {
 
-    private static OrchestraCache instance;
+    private static TalkingzCache instance;
 
     public static final String BITMAP_ON_CACHE = "BITMAP_ON_CACHE";
 
     private LruCache<Object, Object> lru;
 
-    private OrchestraCache() {
+    private TalkingzCache() {
         lru = new LruCache<Object, Object>(1024);
     }
 
-    public static OrchestraCache getInstance() {
+    public static TalkingzCache getInstance() {
         if (instance == null) {
-            instance = new OrchestraCache();
+            instance = new TalkingzCache();
         }
         return instance;
     }

@@ -41,9 +41,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'                 //base
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'                    //base
 
-    testImplementation 'junit:junit:4.13'                                       //Tests
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'                   //Tests
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'      //Tests
+    // Java language implementation
+    implementation "androidx.navigation:navigation-fragment:2.3.1"
+    implementation "androidx.navigation:navigation-ui:2.3.1"
 
     implementation "androidx.room:room-runtime:2.2.5"                           //Room components
     annotationProcessor "androidx.room:room-compiler:2.2.5"                     //Room components
@@ -51,6 +51,10 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"              //Lifecycle components
     annotationProcessor "androidx.lifecycle:lifecycle-common-java8:2.2.0"       //Lifecycle components
+
+    testImplementation 'junit:junit:4.13'                                       //Tests
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'                   //Tests
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'      //Tests
 
     implementation "com.google.code.gson:gson:2.8.5" //
 

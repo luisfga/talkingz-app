@@ -1,7 +1,10 @@
 package br.com.luisfga.talkingz.app.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.*;
+import androidx.annotation.Nullable;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -22,9 +25,14 @@ public class TabsActivity extends OrchestraAbstractRootActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // remove title (to not show anything before splash screen
+        setFullscreen(true);
+
+        Intent splashScreenIntent = new Intent(getApplication(), SplashScreenActivity.class);
+        startActivity(splashScreenIntent);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
-        getSupportActionBar().setElevation(0);
 
         //ADAPTER
         TabFragmentPagerAdapter adapter = new TabFragmentPagerAdapter(getSupportFragmentManager());
@@ -40,7 +48,29 @@ public class TabsActivity extends OrchestraAbstractRootActivity {
         TabLayout tabLayout = findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
+        setFullscreen(false);
+        getSupportActionBar().setElevation(0);//to hide divider-line between tabs and action bar
+//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_main_menu);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
+
+    private void setFullscreen(boolean fullscreen) {
+        WindowManager.LayoutParams attrs = getWindow().getAttributes();
+        if (fullscreen) {
+            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        } else {
+            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        }
+        getWindow().setAttributes(attrs);
+    }
+
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.main_menu, menu);
+//        return true;
+//    }
 
     class TabFragmentPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
