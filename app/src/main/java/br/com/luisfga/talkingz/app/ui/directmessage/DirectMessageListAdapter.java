@@ -24,8 +24,8 @@ import java.util.UUID;
 import br.com.luisfga.talkingz.app.R;
 import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
-import br.com.luisfga.talkingz.commons.MessageStatus;
-import br.com.luisfga.talkingz.commons.Mimetype;
+import br.com.luisfga.talkingz.commons.constants.MessageStatus;
+import br.com.luisfga.talkingz.commons.constants.Mimetype;
 
 public class DirectMessageListAdapter extends BaseAdapter {
 

@@ -13,7 +13,7 @@ import br.com.luisfga.talkingz.app.database.OrchestraClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
 import br.com.luisfga.talkingz.app.database.entity.user.User;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
-import br.com.luisfga.talkingz.commons.MessageStatus;
+import br.com.luisfga.talkingz.commons.constants.MessageStatus;
 import br.com.luisfga.talkingz.commons.MessageWrapper;
 import br.com.luisfga.talkingz.commons.orchestration.Orchestration;
 import br.com.luisfga.talkingz.commons.orchestration.command.CommandConfirmDelivery;

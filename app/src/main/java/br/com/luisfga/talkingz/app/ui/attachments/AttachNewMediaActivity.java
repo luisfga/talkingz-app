@@ -21,7 +21,7 @@ import br.com.luisfga.talkingz.app.background.OrchestraCache;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
 import br.com.luisfga.talkingz.app.utils.FileUtility;
-import br.com.luisfga.talkingz.commons.Mimetype;
+import br.com.luisfga.talkingz.commons.constants.Mimetype;
 
 public class AttachNewMediaActivity extends OrchestraAbstractRootActivity {
 
