@@ -21,6 +21,17 @@ android {
         }
     }
 
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    'src/main/res/layouts/generated_nav',
+                    'src/main/res/layouts/talkingz',
+                    'src/main/res/layouts',
+                    'src/main/res'
+            ]
+        }
+    }
+
     compileOptions {
         sourceCompatibility = 1.8
         targetCompatibility = 1.8
