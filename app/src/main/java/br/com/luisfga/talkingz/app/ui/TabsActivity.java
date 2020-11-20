@@ -50,8 +50,6 @@ public class TabsActivity extends OrchestraAbstractRootActivity {
 
         setFullscreen(false);
         getSupportActionBar().setElevation(0);//to hide divider-line between tabs and action bar
-//        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_main_menu);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
     }
 
