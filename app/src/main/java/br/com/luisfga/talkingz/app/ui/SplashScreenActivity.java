@@ -18,7 +18,7 @@ public class SplashScreenActivity extends OrchestraAbstractRootActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_splash);
+        setContentView(R.layout.activity_splash_screen);
 
         talkinzApp = (TalkinzApp) getApplication();
 
