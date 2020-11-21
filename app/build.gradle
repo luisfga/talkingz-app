@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "br.com.luisfga.talkingzapp"
+        applicationId "br.com.luisfga.talkingz.app"
         minSdkVersion 22
         targetSdkVersion 29
         versionCode 1
@@ -18,17 +18,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    sourceSets {
-        main {
-            res.srcDirs = [
-                    'src/main/res/layouts/generated_nav',
-                    'src/main/res/layouts/talkingz',
-                    'src/main/res/layouts',
-                    'src/main/res'
-            ]
         }
     }
 
@@ -56,6 +45,7 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment:2.3.1"
     implementation "androidx.navigation:navigation-ui:2.3.1"
 
+    implementation 'androidx.preference:preference:1.1.0'
     implementation "androidx.room:room-runtime:2.2.5"                           //Room components
     annotationProcessor "androidx.room:room-compiler:2.2.5"                     //Room components
     androidTestImplementation "androidx.room:room-testing:2.2.5"                //Room components

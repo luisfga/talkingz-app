@@ -5,6 +5,7 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Looper;
 import android.util.Log;
 
 import java.net.InetAddress;
@@ -40,7 +41,7 @@ import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.Respon
  */
 public class TalkinzApp extends Application implements MessagingWSClient.OrchestraMessageHandler, ResponseDispatcher{
 
-    private final String TAG = "OrchestraApp";
+    private final String TAG = "TalkinzApp";
 
     //BANCO DE DADOS
     public TalkingzClientRoomDatabase getTalkingzDB() {
@@ -91,6 +92,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
 
                 getTalkingzDB().userDAO().insert(mainUser);
 
+                Looper.prepare();
                 Toast.makeText(this, "Novo usuário criado: " + mainUser.getId().toString(), Toast.LENGTH_LONG).show();
             }
     }

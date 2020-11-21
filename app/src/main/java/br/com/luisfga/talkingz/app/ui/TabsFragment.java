@@ -1,10 +1,10 @@
 package br.com.luisfga.talkingz.app.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.*;
 import androidx.annotation.Nullable;
+import br.com.luisfga.talkingz.app.MainActivity;
 import com.google.android.material.tabs.TabLayout;
 
 import androidx.annotation.NonNull;
@@ -19,56 +19,37 @@ import java.util.List;
 import br.com.luisfga.talkingz.app.R;
 import br.com.luisfga.talkingz.app.ui.contacts.ContactsFragment;
 import br.com.luisfga.talkingz.app.ui.group.GroupsFragment;
-import br.com.luisfga.talkingz.app.ui.profile.ProfileFragment;
 
-public class TabsActivity extends OrchestraAbstractRootActivity {
+public class TabsFragment extends OrchestraAbstractRootFragment {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        // remove title (to not show anything before splash screen
-        setFullscreen(true);
-
-        Intent splashScreenIntent = new Intent(getApplication(), SplashScreenActivity.class);
-        startActivity(splashScreenIntent);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tabs);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_tabs, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         //ADAPTER
-        TabFragmentPagerAdapter adapter = new TabFragmentPagerAdapter(getSupportFragmentManager());
+        TabFragmentPagerAdapter adapter = new TabFragmentPagerAdapter(getActivity().getSupportFragmentManager());
         adapter.addFragment(new ContactsFragment(), "Contatos");
         adapter.addFragment(new GroupsFragment(), "Grupos");
-        adapter.addFragment(new ProfileFragment(), "Perfil");
 
         //ADAPTER >>> VIEWPAGER
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        ViewPager viewPager = getView().findViewById(R.id.view_pager);
         viewPager.setAdapter(adapter);
 
         //VIEWPAGER >>> TABLAYOUT
-        TabLayout tabLayout = findViewById(R.id.tab_layout);
+        TabLayout tabLayout = getView().findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
-        setFullscreen(false);
-        getSupportActionBar().setElevation(0);//to hide divider-line between tabs and action bar
-
     }
-
-    private void setFullscreen(boolean fullscreen) {
-        WindowManager.LayoutParams attrs = getWindow().getAttributes();
-        if (fullscreen) {
-            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        } else {
-            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
-        }
-        getWindow().setAttributes(attrs);
-    }
-
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.main_menu, menu);
-//        return true;
-//    }
 
     class TabFragmentPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
