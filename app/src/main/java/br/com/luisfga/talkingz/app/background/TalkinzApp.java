@@ -103,7 +103,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
             loadUser();
             refreshSchedules();
-//        connect();
+            connect();
         });
     }
 

@@ -91,7 +91,7 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
         //SET MESSAGES RECYCLER
         msgsListView = findViewById(R.id.msgs_list_view);
 
-        UUID mainUserId = talkinzApp.getMainUser().getId();
+        UUID mainUserId = getTalkinzApp().getMainUser().getId();
         directMessageViewModel = new ViewModelProvider(this, new DirectMessageViewModelFactory(getApplication(), contactId, mainUserId)).get(DirectMessageViewModel.class);
         DirectMessageListAdapter adapter = new DirectMessageListAdapter(this, mainUserId);
         msgsListView.setAdapter(adapter);
@@ -112,7 +112,7 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
         Future<User> loadingContact = AppDefaultExecutor.getOrchestraNormalPriorityThread().submit(new Callable<User>() {
             @Override
             public User call() throws Exception {
-                return talkinzApp.getTalkingzDB().userDAO().getById(contactId);
+                return getTalkinzApp().getTalkingzDB().userDAO().getById(contactId);
             }
         });
         try {
@@ -210,12 +210,12 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
         //#ProcessoMensagem#1 - salva a imagem no banco do cliente
         DirectMessage directMessage = new DirectMessage();
 
-        UUID mainUserId = talkinzApp.getMainUser().getId();
+        UUID mainUserId = getTalkinzApp().getMainUser().getId();
         UUID messageUUID = UUID.randomUUID();
 
         directMessage.setId(messageUUID);
         directMessage.setDestId(contact.getId());
-        directMessage.setSenderId(talkinzApp.getMainUser().getId());
+        directMessage.setSenderId(getTalkinzApp().getMainUser().getId());
         directMessage.setContent(msg);
         directMessage.setSentTime(new Timestamp(System.currentTimeMillis()));
         directMessage.setStatus(MessageStatus.MSG_STATUS_SENT);
@@ -231,7 +231,7 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
         Log.i(TAG,"Mensagem salva");
 
         Log.i(TAG, "Mensagem pronta para ser enviada");
-        if (talkinzApp.isConnectionOpen()) {
+        if (getTalkinzApp().isConnectionOpen()) {
             //montando mensagem websocket
             MessageWrapper messageWrapper = new MessageWrapper();
             messageWrapper.setId(directMessage.getId());
@@ -246,7 +246,7 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
             Log.i(TAG, "Enviando mensagem");
             CommandSend commandSend = new CommandSend();
             commandSend.setMessageWrapper(messageWrapper);
-            talkinzApp.getWsClient().sendCommandOrFeedBack(commandSend);
+            getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandSend);
 
             //enviar arquivo de mídia, se for o caso
             if (directMessage.getMediaUriPath() != null) {
@@ -267,8 +267,8 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
     void sendCommandGetFile(String downloadToken) {
         CommandGetFile commandGetFile = new CommandGetFile();
         commandGetFile.setDownloadToken(downloadToken);
-        talkinzApp.getWsClient().sendCommandOrFeedBack(commandGetFile);
-        talkinzApp.setResponseCommandGetFileHandler(this);
+        getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandGetFile);
+        getTalkinzApp().setResponseCommandGetFileHandler(this);
     }
 
     @Override

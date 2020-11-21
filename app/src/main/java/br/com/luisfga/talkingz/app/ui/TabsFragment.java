@@ -37,7 +37,7 @@ public class TabsFragment extends OrchestraAbstractRootFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 
         //ADAPTER
-        TabFragmentPagerAdapter adapter = new TabFragmentPagerAdapter(getActivity().getSupportFragmentManager());
+        TabFragmentPagerAdapter adapter = new TabFragmentPagerAdapter(getChildFragmentManager());
         adapter.addFragment(new ContactsFragment(), "Contatos");
         adapter.addFragment(new GroupsFragment(), "Grupos");
 

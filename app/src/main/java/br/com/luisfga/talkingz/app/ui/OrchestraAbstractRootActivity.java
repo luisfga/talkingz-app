@@ -11,12 +11,7 @@ import br.com.luisfga.talkingz.app.background.TalkinzApp;
 @SuppressLint("Registered")
 public abstract class OrchestraAbstractRootActivity extends AppCompatActivity {
 
-    protected TalkinzApp talkinzApp;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        talkinzApp = (TalkinzApp) getApplication();
+    protected TalkinzApp getTalkinzApp(){
+        return (TalkinzApp) getApplication();
     }
 }

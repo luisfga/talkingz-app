@@ -40,6 +40,7 @@ import br.com.luisfga.talkingz.app.utils.DialogUtility;
 import br.com.luisfga.talkingz.app.utils.FileUtility;
 import br.com.luisfga.talkingz.commons.UserWrapper;
 import br.com.luisfga.talkingz.commons.orchestration.command.CommandSyncUser;
+import com.google.android.material.navigation.NavigationView;
 
 public class ProfileFragment extends OrchestraAbstractRootFragment {
 
@@ -65,7 +66,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
             }
         });
 
-        User mainUser = getOrchestraApp().getMainUser();
+        User mainUser = getTalkingzApp().getMainUser();
         if(mainUser.getThumbnail() != null && !"".equals(mainUser.getThumbnail())) {
             thumbnail.setImageBitmap(BitmapUtility.getBitmapFromBytes(mainUser.getThumbnail()));
         }
@@ -93,9 +94,10 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
                 mainUser.setEmail(email.getText().toString());
                 mainUser.setSearchToken(token.getText().toString());
 
-                AppDefaultExecutor.getOrchestraNormalPriorityThread().execute(() -> getOrchestraApp().getTalkingzDB().userDAO().update(mainUser));
+                AppDefaultExecutor.getOrchestraNormalPriorityThread().execute(() -> getTalkingzApp().getTalkingzDB().userDAO().update(mainUser));
 
                 syncronizeMainUser(mainUser);
+                updateUserScreenLabels(mainUser);
             }
         });
     }
@@ -141,9 +143,29 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
         });
     }
 
+    /**
+     * Set updated data to screen labels, like 'name' and 'token' on Navigation Drawer Header
+     * @param mainUser
+     */
+    private void updateUserScreenLabels(User mainUser){
+
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+
+        //set user name on header
+        TextView navHeaderUserName =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_user_name);
+        navHeaderUserName.setText(getTalkingzApp().getMainUser().getName());
+        //set user search token on header
+        TextView navHeaderSearchToken =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_search_token);
+        navHeaderSearchToken.setText(getTalkingzApp().getMainUser().getSearchToken());
+    }
+
+    /**
+     * Send updated data to server
+     * @param mainUser
+     */
     private void syncronizeMainUser(User mainUser){
 
-        if (getOrchestraApp().isConnectionOpen()){
+        if (getTalkingzApp().isConnectionOpen()){
             UserWrapper userWrapper = new UserWrapper();
             userWrapper.setId(mainUser.getId());
             userWrapper.setName(mainUser.getName());
@@ -157,7 +179,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
             CommandSyncUser commandSyncUser = new CommandSyncUser();
             commandSyncUser.setUserWrapper(userWrapper);
 
-            getOrchestraApp().getWsClient().sendCommandOrFeedBack(commandSyncUser);
+            getTalkingzApp().getWsClient().sendCommandOrFeedBack(commandSyncUser);
 
         } else {
             DialogUtility.showConnectionNotAvailableInfo(getContext());
@@ -203,7 +225,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
         // create Intent to take a picture and return control to the calling application
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        fileUri = FileUtility.getOutputMediaFileUri(getContext(), FileUtility.MEDIA_TYPE_IMAGE, getOrchestraApp().getMainUser().getId().toString()); // create a file to save the image
+        fileUri = FileUtility.getOutputMediaFileUri(getContext(), FileUtility.MEDIA_TYPE_IMAGE, getTalkingzApp().getMainUser().getId().toString()); // create a file to save the image
         intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
         if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
@@ -227,7 +249,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
             Bitmap bitmap = BitmapUtility.decodeSampledBitmapFromUri(getContext().getContentResolver(), fileUri, 25, true);
 
             //atualiza objeto do usuário
-            User mainUser = getOrchestraApp().getMainUser();
+            User mainUser = getTalkingzApp().getMainUser();
             mainUser.setThumbnail(BitmapUtility.getBytesFromBitmap(bitmap));
 
             //coloca a imagem na view
@@ -239,7 +261,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
             Bitmap bitmap = BitmapUtility.decodeSampledBitmapFromUri(getContext().getContentResolver(), data.getData(), 25, true);
 
             //save file on disk and point database
-            getOrchestraApp().getMainUser().setThumbnail(BitmapUtility.getBytesFromBitmap(bitmap));
+            getTalkingzApp().getMainUser().setThumbnail(BitmapUtility.getBytesFromBitmap(bitmap));
 
             ImageView thumbnail = getActivity().findViewById(R.id.thumbnail);
             thumbnail.setImageBitmap(bitmap);

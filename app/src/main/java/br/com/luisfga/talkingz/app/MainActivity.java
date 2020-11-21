@@ -1,18 +1,14 @@
 package br.com.luisfga.talkingz.app;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.Menu;
+import android.widget.TextView;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 public class MainActivity extends OrchestraAbstractRootActivity {
@@ -29,6 +25,14 @@ public class MainActivity extends OrchestraAbstractRootActivity {
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        //set user name on header
+        TextView navHeaderUserName =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_user_name);
+        navHeaderUserName.setText(getTalkinzApp().getMainUser().getName());
+        //set user search token on header
+        TextView navHeaderSearchToken =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_search_token);
+        navHeaderSearchToken.setText(getTalkinzApp().getMainUser().getSearchToken());
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home)
@@ -52,4 +56,5 @@ public class MainActivity extends OrchestraAbstractRootActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

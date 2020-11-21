@@ -70,7 +70,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
         negativeButton = findViewById(R.id.negativeButton);
         negativeButton.setOnClickListener(v -> finish());
 
-        talkinzApp.setResponseCommandFindContactHandler(this);
+        getTalkinzApp().setResponseCommandFindContactHandler(this);
     }
 
     private void adicionarContato(User contact) {
@@ -129,7 +129,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
             String token = inputEditText.getText().toString();
 
             //Validação do TOKEN
-            if (!"".equals(token) && !talkinzApp.getMainUser().getSearchToken().equals(token)){
+            if (!"".equals(token) && !getTalkinzApp().getMainUser().getSearchToken().equals(token)){
 
                 InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0);
@@ -137,7 +137,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
                 //verificar se o usuário já está adicionado
                 User contact;
                 Future<User> loadingContact = AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().submit(() ->
-                        talkinzApp.getTalkingzDB().userDAO().getByToken(token));
+                        getTalkinzApp().getTalkingzDB().userDAO().getByToken(token));
                 try {
                     contact = loadingContact.get();
                     if (contact != null) {
@@ -150,7 +150,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
                     e.printStackTrace();
                 }
 
-                if (talkinzApp.isConnectionOpen()) {
+                if (getTalkinzApp().isConnectionOpen()) {
                     //se não retornou significa que não há esse token na lista de contatos
                     validationErrorPanel.setVisibility(View.GONE);
 
@@ -163,7 +163,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
                     //Busca Contato
                     CommandFindContact commandFindContact = new CommandFindContact();
                     commandFindContact.setSearchToken(token);
-                    talkinzApp.getWsClient().sendCommandOrFeedBack(commandFindContact);
+                    getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandFindContact);
 
                     //Aguarda retorno - tratado no método handle
 
@@ -172,7 +172,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
                 }
 
 
-            } else if (talkinzApp.getMainUser().getSearchToken().equals(token)) {
+            } else if (getTalkinzApp().getMainUser().getSearchToken().equals(token)) {
                 validationErrorMessage.setText("Esse é o seu token");
                 validationErrorImage.setImageResource(R.drawable.ic_resp_success);
                 validationErrorPanel.setVisibility(View.VISIBLE);
