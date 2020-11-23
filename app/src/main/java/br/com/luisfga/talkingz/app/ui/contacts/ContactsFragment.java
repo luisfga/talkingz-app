@@ -21,7 +21,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.List;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.database.viewmodels.ContactViewModel;
 import br.com.luisfga.talkingz.app.ui.AddContactActivity;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootFragment;

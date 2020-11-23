@@ -5,9 +5,6 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
-
 @Entity(tableName = "user_group_join",
         indices = @Index("group_id"),
         primaryKeys = {"user_id","group_id"},

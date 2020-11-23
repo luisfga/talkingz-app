@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.database.viewmodels.ContactViewModel;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;

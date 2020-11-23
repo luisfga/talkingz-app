@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.database.entity.message;
+package br.com.luisfga.talkingz.app.database.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -9,8 +9,6 @@ import androidx.room.PrimaryKey;
 
 import java.sql.Timestamp;
 import java.util.UUID;
-
-import br.com.luisfga.talkingz.app.database.entity.user.User;
 
 @Entity(tableName = "direct_message",
         indices = {@Index("dest_id"),

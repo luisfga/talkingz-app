@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
+import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 import br.com.luisfga.talkingz.app.database.repositories.DirectMessagesRepository;
 
 public class DirectMessageViewModel extends AndroidViewModel {

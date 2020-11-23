@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.ui.directmessage.DirectMessageActivity;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
 

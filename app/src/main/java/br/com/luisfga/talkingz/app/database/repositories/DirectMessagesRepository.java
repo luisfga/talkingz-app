@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.dao.DirectMessageDAO;
-import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
+import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 
 public class DirectMessagesRepository {
 

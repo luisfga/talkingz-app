@@ -10,7 +10,7 @@ import androidx.room.Update;
 import java.util.List;
 import java.util.UUID;
 
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 
 @Dao
 public interface UserDAO {

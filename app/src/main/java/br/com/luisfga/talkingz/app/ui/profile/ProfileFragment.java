@@ -32,7 +32,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootFragment;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
@@ -77,7 +77,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
         EditText email = getView().findViewById(R.id.email);
         email.setText(mainUser.getEmail());
 
-        EditText token = getView().findViewById(R.id.search_token);
+        EditText token = getView().findViewById(R.id.searchToken);
         token.setText(mainUser.getSearchToken());
 
         TextView joinDate = getView().findViewById(R.id.joinDate);

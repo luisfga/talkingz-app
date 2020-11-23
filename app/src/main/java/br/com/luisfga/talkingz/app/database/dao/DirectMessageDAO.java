@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
-import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
+import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 
 @Dao
 public abstract class DirectMessageDAO implements BaseDAO<DirectMessage> {

@@ -8,7 +8,7 @@ import java.util.List;
 
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.dao.UserDAO;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 
 public class ContactsRepository {
 

@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
+import br.com.luisfga.talkingz.app.database.entity.Group;
 import br.com.luisfga.talkingz.app.database.repositories.GroupsRepository;
 
 public class GroupViewModel extends AndroidViewModel {

@@ -14,10 +14,10 @@ import br.com.luisfga.talkingz.app.database.dao.UserDAO;
 import br.com.luisfga.talkingz.app.database.dao.DirectMessageDAO;
 import br.com.luisfga.talkingz.app.database.dao.GroupDAO;
 import br.com.luisfga.talkingz.app.database.entity.UserGroupJoin;
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
-import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
-import br.com.luisfga.talkingz.app.database.entity.message.GroupMessage;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.Group;
+import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
+import br.com.luisfga.talkingz.app.database.entity.GroupMessage;
+import br.com.luisfga.talkingz.app.database.entity.User;
 
 @Database(entities = {
         User.class,

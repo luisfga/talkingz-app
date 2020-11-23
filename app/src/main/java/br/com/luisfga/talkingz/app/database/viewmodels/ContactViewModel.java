@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData;
 
 import java.util.List;
 
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.database.repositories.ContactsRepository;
 
 public class ContactViewModel extends AndroidViewModel {

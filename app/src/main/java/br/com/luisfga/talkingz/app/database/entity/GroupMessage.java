@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.database.entity.message;
+package br.com.luisfga.talkingz.app.database.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
@@ -7,9 +7,6 @@ import androidx.room.ForeignKey;
 import androidx.room.Index;
 
 import java.sql.Timestamp;
-
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
 
 @Entity(tableName = "group_message",
         indices = {@Index("destination_group_id"),

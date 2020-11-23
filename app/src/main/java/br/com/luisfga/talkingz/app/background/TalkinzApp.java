@@ -5,20 +5,24 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
 import android.widget.Toast;
 import androidx.annotation.WorkerThread;
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
-import br.com.luisfga.talkingz.app.database.entity.message.DirectMessage;
-import br.com.luisfga.talkingz.app.database.entity.user.User;
+import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
+import br.com.luisfga.talkingz.app.database.entity.User;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 import br.com.luisfga.talkingz.commons.constants.MessageStatus;
 import br.com.luisfga.talkingz.commons.MessageWrapper;

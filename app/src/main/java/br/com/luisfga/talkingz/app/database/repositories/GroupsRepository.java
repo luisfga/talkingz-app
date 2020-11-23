@@ -8,7 +8,7 @@ import java.util.List;
 
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.dao.GroupDAO;
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
+import br.com.luisfga.talkingz.app.database.entity.Group;
 
 public class GroupsRepository {
 

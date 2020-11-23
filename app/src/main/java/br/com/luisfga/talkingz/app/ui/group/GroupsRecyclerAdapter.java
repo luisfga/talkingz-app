@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.database.entity.group.Group;
+import br.com.luisfga.talkingz.app.database.entity.Group;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
 
 

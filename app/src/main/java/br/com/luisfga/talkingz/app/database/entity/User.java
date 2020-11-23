@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.database.entity.user;
+package br.com.luisfga.talkingz.app.database.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
