@@ -33,10 +33,10 @@ public class TalkingzBroadcastReceiver extends BroadcastReceiver {
     private void startOrchestraCoreService(Context context, String action) {
         Intent broadcastServiceStart = new Intent(context, TalkingzService.class);
         broadcastServiceStart.setAction(action);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            context.startForegroundService(broadcastServiceStart);
-        } else {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            context.startForegroundService(broadcastServiceStart);
+//        } else {
             context.startService(broadcastServiceStart);
-        }
+//        }
     }
 }
