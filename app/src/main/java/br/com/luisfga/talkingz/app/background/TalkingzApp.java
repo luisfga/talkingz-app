@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
@@ -40,10 +41,12 @@ import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGet
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseDispatcher;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
 
+import javax.websocket.PongMessage;
+
 /**
  * @author luisfga
  */
-public class TalkinzApp extends Application implements MessagingWSClient.OrchestraMessageHandler, ResponseDispatcher{
+public class TalkingzApp extends Application implements MessagingWSClient.OrchestraMessageHandler, ResponseDispatcher{
 
     private final String TAG = "TalkinzApp";
 
@@ -70,15 +73,16 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
     /* -----------------------------------------------*/
     /* ----------- CONFIG AND INITIALIZATION ---------*/
     /* -----------------------------------------------*/
-    @WorkerThread
-    private void refreshSchedules(){
-        //set 'alarm' to trigger call on TalkingzBroadcastReceiver
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent broadcastReceiverIntent = new Intent(this, TalkingzBroadcastReceiver.class);
-        broadcastReceiverIntent.setAction(TalkingzBroadcastReceiver.ACTION_TALKINGZ_KEEP_ALIVE_PING);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, broadcastReceiverIntent, 0);
-        alarmManager.setExact(AlarmManager.RTC,System.currentTimeMillis()+TalkingzBroadcastReceiver.INTERVAL, pendingIntent);
-    }
+//    @WorkerThread
+//    private void refreshSchedules(){
+//        long interval = TalkingzBroadcastReceiver.INTERVAL;
+//        //set 'alarm' to trigger call on TalkingzBroadcastReceiver
+//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//        Intent broadcastReceiverIntent = new Intent(this, TalkingzBroadcastReceiver.class);
+//        broadcastReceiverIntent.setAction(TalkingzBroadcastReceiver.ACTION_TALKINGZ_KEEP_ALIVE_PING);
+//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, broadcastReceiverIntent, 0);
+//        alarmManager.setRepeating(AlarmManager.RTC,System.currentTimeMillis()+interval, interval, pendingIntent);
+//    }
 
     @WorkerThread
     private void loadUser() {
@@ -106,7 +110,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
         super.onCreate();
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
             loadUser();
-            refreshSchedules();
+//            refreshSchedules();
             connect();
         });
     }
@@ -116,15 +120,19 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
     /* -----------------------------------------------*/
     public void connect() {
         this.messagingWSClient = MessagingWSClient.getIntansce(this);
-        this.messagingWSClient.conectar(this.getApplicationContext(), this.mainUser.getId().toString());
+
+        if (this.mainUser != null && !this.messagingWSClient.isConnectionOpen())
+            this.messagingWSClient.conectar(this.getApplicationContext(), this.mainUser.getId().toString());
     }
 
     public boolean isInternetAvailable() {
         InetAddress ipAddr = null;
         try {
             ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.equals("");
+            return !ipAddr.isReachable(5000);
         } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
         //You can replace it with your name
@@ -135,17 +143,17 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
     /* -------------- MESSAGE HANDLER API ------------*/
     /* -----------------------------------------------*/
     public boolean isConnectionOpen() {
-        return MessagingWSClient.isConnectionOpen();
+        return MessagingWSClient.getIntansce(this).isConnectionOpen();
     }
 
     @Override
     public void onConnectionOpen() {
-        Log.println(Log.INFO, TAG, "onConnectionOpen");
+        Log.println(Log.DEBUG, TAG, "onConnectionOpen");
 
         if (getMainUser() != null) {
             //enviar pendências
             List<DirectMessage> pendentesDeEnvio = getTalkingzDB().directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
-            Log.println(Log.INFO, TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
+            Log.println(Log.DEBUG, TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
             for (DirectMessage directMessage: pendentesDeEnvio) {
 
                 MessageWrapper messageWrapper = new MessageWrapper();
@@ -161,7 +169,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
                 CommandSend commandSend = new CommandSend();
                 commandSend.setMessageWrapper(messageWrapper);
 
-                Log.println(Log.INFO, TAG, "enviando mensagem");
+                Log.println(Log.DEBUG, TAG, "enviando mensagem");
                 this.messagingWSClient.sendCommandOrFeedBack(commandSend);
 
                 //enviar arquivo de mídia, se for o caso
@@ -183,14 +191,14 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
 
     @Override
     public void onConnectionClose() {
-        Log.println(Log.INFO, TAG, "onConnectionClose");
+        Log.println(Log.DEBUG, TAG, "onConnectionClose");
         MessagingWSClient.clear();
     }
 
     @Override
     public void onConnectionError(String errorMessage) {
-        Log.println(Log.INFO, TAG, "onConnectionError");
-        Log.println(Log.INFO, TAG, errorMessage);
+        Log.println(Log.DEBUG, TAG, "onConnectionError");
+        Log.println(Log.DEBUG, TAG, errorMessage);
         MessagingWSClient.clear();
     }
 
@@ -218,7 +226,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
 
             //retorno meramente informativo sem relevância
         } else if (orchestration instanceof FeedBackCommandSyncUser) {
-            Log.println(Log.INFO, TAG, "Usuário sincronizado no servidor");
+            Log.println(Log.DEBUG, TAG, "Usuário sincronizado no servidor");
         }
     }
 
@@ -230,22 +238,22 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
                 feedBackCommandSend.getId(),
                 new Timestamp(feedBackCommandSend.getSentTimeInMillis()),
                 MessageStatus.MSG_STATUS_ON_TRAFFIC);
-        Log.println(Log.INFO, TAG, "FeedBack recebido: FeedBackCommandSend");
+        Log.println(Log.DEBUG, TAG, "FeedBack recebido: FeedBackCommandSend");
     }
 
     private void processCommandConfirmDelivery(CommandConfirmDelivery commandConfirmDelivery) {
         getTalkingzDB().directMessageDAO().updateMessageStatus(commandConfirmDelivery.getId(), MessageStatus.MSG_STATUS_DELIVERED);
 
-        Log.println(Log.INFO, TAG, "Confirmação recebida da mensagem: " + commandConfirmDelivery.getId());
+        Log.println(Log.DEBUG, TAG, "Confirmação recebida da mensagem: " + commandConfirmDelivery.getId());
 
         FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
         feedBackCommandConfirmDelivery.setId(commandConfirmDelivery.getId());
-        Log.println(Log.INFO, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
+        Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
         this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
     }
 
     private void processFeedBackCommandOnLogin(FeedBackCommandLogin feedBackCommandLogin) {
-        Log.println(Log.INFO, TAG, "processFeedBackCommandOnLogin");
+        Log.println(Log.DEBUG, TAG, "processFeedBackCommandOnLogin");
 
         for (MessageWrapper messageWrapper : feedBackCommandLogin.getPendingMessages()) {
             DirectMessage directMessage = new DirectMessage();
@@ -262,12 +270,12 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
 
             directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
             getTalkingzDB().directMessageDAO().insert(directMessage);
-            Log.println(Log.INFO, TAG, "Mensagem recebida: " + directMessage.getContent());
+            Log.println(Log.DEBUG, TAG, "Mensagem recebida: " + directMessage.getContent());
 
             FeedBackCommandDeliver feedBackMessageReceived = new FeedBackCommandDeliver();
             feedBackMessageReceived.setSenderId(directMessage.getSenderId());
             feedBackMessageReceived.setId(directMessage.getId());
-            Log.println(Log.INFO, TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
+            Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
             this.messagingWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
         }
 
@@ -277,7 +285,7 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
             FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
             feedBackCommandConfirmDelivery.setId(uuid);
 
-            Log.println(Log.INFO, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
+            Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
             this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
         }
     }
@@ -297,14 +305,14 @@ public class TalkinzApp extends Application implements MessagingWSClient.Orchest
 
         directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
         getTalkingzDB().directMessageDAO().insert(directMessage);
-        Log.println(Log.INFO, TAG, "Mensagem recebida: " + directMessage.getContent());
+        Log.println(Log.DEBUG, TAG, "Mensagem recebida: " + directMessage.getContent());
 
         //send feedback
         FeedBackCommandDeliver feedBackCommandDeliver = new FeedBackCommandDeliver();
         feedBackCommandDeliver.setSenderId(directMessage.getSenderId());
         feedBackCommandDeliver.setId(directMessage.getId());
         this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
-        Log.println(Log.INFO, TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
+        Log.println(Log.DEBUG, TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
     }
 
     /* -----------------------------------------------*/

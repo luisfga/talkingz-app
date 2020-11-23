@@ -7,16 +7,16 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 
 public class TalkingzService extends Service {
 
-    public static final String APP_START = "APP_START";
-    public static final String SCHEDULE_START = "SCHEDULE_START";
-    public static final String BOOT_START = "BOOT_START";
     public static final String NETWORK_STATE_CHANGED_START = "NETWORK_STATE_CHANGED_START";
 
-    private final String TAG = "ConnectivityService";
+    private final String TAG = "TalkingzService";
     private TalkingzBinder binder;
+
+    private TalkingzApp talkingzApp;
 
     public TalkingzService() {
         super();
@@ -36,13 +36,27 @@ public class TalkingzService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        Log.println(Log.INFO, TAG, "onCreate");
+        Log.println(Log.DEBUG, TAG, "onCreate");
+
+        talkingzApp = (TalkingzApp) getApplication();
 
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.println(Log.INFO, TAG, "onStartCommand - startId:"+startId);
+        Log.println(Log.DEBUG, TAG, "onStartCommand - startId:"+startId);
+
+//        if (intent.getAction().equals(SCHEDULED_KEEPALIVE_CHECK)) {
+//            Log.println(Log.DEBUG, TAG, "Checking connection");
+//            if (talkingzApp.isConnectionOpen()) {
+//                Log.println(Log.DEBUG, TAG, "Connection was already open. Sending ping message!");
+//                talkingzApp.getWsClient().sendPingMessage();
+//            } else {
+//                Log.println(Log.DEBUG, TAG, "Connection was closed");
+//                talkingzApp.connect();
+//            }
+//
+//        }
 
         return START_STICKY;
     }

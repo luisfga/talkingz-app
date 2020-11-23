@@ -4,7 +4,7 @@ import android.media.MediaActionSound;
 import android.os.Bundle;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.background.TalkinzApp;
+import br.com.luisfga.talkingz.app.background.TalkingzApp;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 
 /**
@@ -13,14 +13,14 @@ import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
  */
 public class SplashScreenActivity extends OrchestraAbstractRootActivity {
 
-    TalkinzApp talkinzApp;
+    TalkingzApp talkingzApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
 
-        talkinzApp = (TalkinzApp) getApplication();
+        talkingzApp = (TalkingzApp) getApplication();
 
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
 
