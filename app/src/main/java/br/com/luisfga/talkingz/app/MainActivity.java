@@ -1,8 +1,11 @@
 package br.com.luisfga.talkingz.app;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.WindowManager;
 import android.widget.TextView;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
+import br.com.luisfga.talkingz.app.ui.SplashScreenActivity;
 import com.google.android.material.navigation.NavigationView;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -15,8 +18,26 @@ public class MainActivity extends OrchestraAbstractRootActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
 
+    private void setFullscreen(boolean fullscreen) {
+        WindowManager.LayoutParams attrs = getWindow().getAttributes();
+        if (fullscreen) {
+            attrs.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        } else {
+            attrs.flags &= ~WindowManager.LayoutParams.FLAG_FULLSCREEN;
+        }
+        getWindow().setAttributes(attrs);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // remove title (to not show anything before splash screen
+        // line commented and set on Manifest by theme
+//        this.setFullscreen(true);
+
+        //show timed splash screen
+        Intent splashScreenIntent = new Intent(getApplicationContext(), SplashScreenActivity.class);
+        startActivity(splashScreenIntent);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -41,6 +62,8 @@ public class MainActivity extends OrchestraAbstractRootActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        setFullscreen(false);
     }
 
 //    @Override
