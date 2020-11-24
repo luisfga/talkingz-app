@@ -2,7 +2,7 @@ package br.com.luisfga.talkingz.app.ui;
 
 import androidx.fragment.app.Fragment;
 
-import br.com.luisfga.talkingz.app.background.TalkingzApp;
+import br.com.luisfga.talkingz.app.core.TalkingzApp;
 
 public abstract class OrchestraAbstractRootFragment extends Fragment {
 

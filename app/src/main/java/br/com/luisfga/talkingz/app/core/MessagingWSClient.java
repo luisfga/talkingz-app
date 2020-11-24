@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.background;
+package br.com.luisfga.talkingz.app.core;
 
 import android.content.Context;
 import android.util.Log;
@@ -39,7 +39,7 @@ public class MessagingWSClient {
 
     static MessagingWSClient getIntansce(OrchestraMessageHandler handler){
         messageHandler = handler;
-        if (INSTANCE == null || INSTANCE.getUserSession() == null || !INSTANCE.getUserSession().isOpen()){
+        if (INSTANCE == null || INSTANCE.userSession == null || !INSTANCE.userSession.isOpen()){
             INSTANCE = new MessagingWSClient();
         }
         return INSTANCE;
@@ -51,14 +51,10 @@ public class MessagingWSClient {
 
     boolean isConnectionOpen() {
         return INSTANCE != null
-                && INSTANCE.getUserSession() != null
-                && INSTANCE.getUserSession().isOpen();
+                && INSTANCE.userSession != null
+                && INSTANCE.userSession.isOpen();
     }
 
-
-    /**************
-     * CONSTRUCTOR
-     **************/
     void conectar(Context applicationContext, String userId) {
         this.applicationContext = applicationContext;
 
@@ -105,14 +101,7 @@ public class MessagingWSClient {
     }
 
     /**************
-     * GETTERs and SETTERs
-     **************/
-    Session getUserSession() {
-        return userSession;
-    }
-
-    /**************
-     * WEBSOCKET API - implementação de métodos abstratos
+     * WEBSOCKET API
      **************/
     @OnOpen
     public void onOpen(Session userSession, EndpointConfig config) {

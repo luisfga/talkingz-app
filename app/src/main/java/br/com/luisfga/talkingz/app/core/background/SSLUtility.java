@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.background;
+package br.com.luisfga.talkingz.app.core.background;
 
 import android.content.Context;
 
@@ -17,7 +17,7 @@ import br.com.luisfga.talkingz.app.R;
 
 public class SSLUtility {
 
-    static SSLContext getConfiguredSSLContext(Context applicationContext) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
+    public static SSLContext getConfiguredSSLContext(Context applicationContext) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException {
         String keyStoreType = "pkcs12";
         String password = "orchestra";
 

@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.background;
+package br.com.luisfga.talkingz.app.core.background;
 
 import android.content.Context;
 import android.net.Uri;

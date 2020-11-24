@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.background;
+package br.com.luisfga.talkingz.app.core.background;
 
 import android.util.LruCache;
 

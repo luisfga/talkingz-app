@@ -1,11 +1,6 @@
-package br.com.luisfga.talkingz.app.background;
+package br.com.luisfga.talkingz.app.core;
 
-import android.app.AlarmManager;
 import android.app.Application;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Looper;
 import android.util.Log;
 
@@ -13,14 +8,12 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
 import android.widget.Toast;
 import androidx.annotation.WorkerThread;
+import br.com.luisfga.talkingz.app.core.background.FileTransferWSClient;
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 import br.com.luisfga.talkingz.app.database.entity.User;
@@ -40,8 +33,6 @@ import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandFin
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGetFile;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseDispatcher;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
-
-import javax.websocket.PongMessage;
 
 /**
  * @author luisfga
@@ -73,16 +64,6 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
     /* -----------------------------------------------*/
     /* ----------- CONFIG AND INITIALIZATION ---------*/
     /* -----------------------------------------------*/
-//    @WorkerThread
-//    private void refreshSchedules(){
-//        long interval = TalkingzBroadcastReceiver.INTERVAL;
-//        //set 'alarm' to trigger call on TalkingzBroadcastReceiver
-//        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        Intent broadcastReceiverIntent = new Intent(this, TalkingzBroadcastReceiver.class);
-//        broadcastReceiverIntent.setAction(TalkingzBroadcastReceiver.ACTION_TALKINGZ_KEEP_ALIVE_PING);
-//        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, broadcastReceiverIntent, 0);
-//        alarmManager.setRepeating(AlarmManager.RTC,System.currentTimeMillis()+interval, interval, pendingIntent);
-//    }
 
     @WorkerThread
     private void loadUser() {
@@ -110,9 +91,10 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
         super.onCreate();
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
             loadUser();
-//            refreshSchedules();
-            connect();
+//            connect();
         });
+//        Intent companionServiceIntent = new Intent(this, TalkingzCompanionService.class);
+//        startService(companionServiceIntent);
     }
 
     /* -----------------------------------------------*/

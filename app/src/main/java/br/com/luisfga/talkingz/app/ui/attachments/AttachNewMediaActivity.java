@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import java.io.File;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.background.TalkingzCache;
+import br.com.luisfga.talkingz.app.core.background.TalkingzCache;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
 import br.com.luisfga.talkingz.app.utils.BitmapUtility;
 import br.com.luisfga.talkingz.app.utils.FileUtility;
