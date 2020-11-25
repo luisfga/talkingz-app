@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app.core.services;
+package br.com.luisfga.talkingz.app.services.messaging;
 /*
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
@@ -17,16 +17,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
-import br.com.luisfga.talkingz.app.core.services.standard.Service;
 
-public class ProcessMainClass {
-    public static final String TAG = ProcessMainClass.class.getSimpleName();
+public class MessagingProcessMainClass {
+    public static final String TAG = MessagingProcessMainClass.class.getSimpleName();
     private static Intent serviceIntent = null;
 
     /**
      * launching the service
      */
-    public void launchService(Context context, Class<Service> serviceClass) {
+    public void launchService(Context context, Class<?> serviceClass) {
         if (context == null) {
             return;
         }
@@ -38,10 +37,10 @@ public class ProcessMainClass {
         } else {
             context.startService(serviceIntent);
         }
-        Log.d(TAG, "ProcessMainClass: start service go!!!!");
+        Log.d(TAG, "start service !!!!");
     }
 
-    private void setServiceIntent(Context context, Class<Service> serviceClass) {
+    private void setServiceIntent(Context context, Class<?> serviceClass) {
         if (serviceIntent == null) {
             serviceIntent = new Intent(context,  serviceClass);
         }

@@ -34,7 +34,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import br.com.luisfga.talkingz.app.core.services.messaging.FileTransferWSClient;
+import br.com.luisfga.talkingz.app.FileTransferWSClient;
 import br.com.luisfga.talkingz.app.utils.TalkingzCache;
 import br.com.luisfga.talkingz.app.ui.attachments.AttachNewMediaActivity;
 import br.com.luisfga.talkingz.app.R;

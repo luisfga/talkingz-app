@@ -24,7 +24,7 @@
     <uses-feature android:name="android.hardware.camera2.full" />
 
     <application
-        android:name=".core.TalkingzApp"
+        android:name=".TalkingzApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -58,12 +58,12 @@
             android:theme="@style/Theme.AppCompat.Translucent"
             android:windowSoftInputMode="adjustResize" />
 
-        <service android:name=".core.services.standard.restarter.JobService"
+        <service android:name=".services.messaging.MessagingJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <!-- Standard [Model] Service -->
         <service
-            android:name=".core.services.standard.Service"
+            android:name=".services.messaging.MessagingService"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
@@ -71,7 +71,7 @@
             />
 
         <receiver
-            android:name=".core.services.standard.restarter.RestartServiceBroadcastReceiver"
+            android:name=".services.messaging.MessagingServiceRestarterBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="StartMyServiceAtBootReceiver">

@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app.core.services.standard.restarter;
+package br.com.luisfga.talkingz.app.services.messaging;
 
 
 import android.app.job.JobInfo;
@@ -18,16 +18,13 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import br.com.luisfga.talkingz.app.core.services.Globals;
-import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
-import br.com.luisfga.talkingz.app.core.services.standard.Service;
 
 import static android.content.Context.JOB_SCHEDULER_SERVICE;
 
-public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
-    public static final String TAG = RestartServiceBroadcastReceiver.class.getSimpleName();
+public class MessagingServiceRestarterBroadcastReceiver extends BroadcastReceiver {
+    public static final String TAG = MessagingServiceRestarterBroadcastReceiver.class.getSimpleName();
     private static JobScheduler jobScheduler;
-    private RestartServiceBroadcastReceiver restartSensorServiceReceiver;
+    private MessagingServiceRestarterBroadcastReceiver restartSensorServiceReceiver;
 
     /**
      * it returns the number of version code
@@ -57,8 +54,8 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
             scheduleJob(context);
         } else {
             registerRestarterReceiver(context);
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(context, Service.class);
+            MessagingProcessMainClass bck = new MessagingProcessMainClass();
+            bck.launchService(context, MessagingService.class);
         }
     }
 
@@ -69,7 +66,7 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
                     .getSystemService(JOB_SCHEDULER_SERVICE);
         }
         ComponentName componentName = new ComponentName(context,
-                JobService.class);
+                MessagingJobService.class);
         JobInfo jobInfo = new JobInfo.Builder(1, componentName)
                 // setOverrideDeadline runs it immediately - you must have at least one constraint
                 // https://stackoverflow.com/questions/51064731/firing-jobservice-without-constraints
@@ -94,7 +91,7 @@ public class RestartServiceBroadcastReceiver extends BroadcastReceiver {
         // Final decision: in case it is called from installation of new version (i.e. from manifest, the application is
         // null. So we must use context.registerReceiver. Otherwise this will crash and we try with context.getApplicationContext
         if (restartSensorServiceReceiver == null)
-            restartSensorServiceReceiver = new RestartServiceBroadcastReceiver();
+            restartSensorServiceReceiver = new MessagingServiceRestarterBroadcastReceiver();
         else try{
             context.unregisterReceiver(restartSensorServiceReceiver);
         } catch (Exception e){

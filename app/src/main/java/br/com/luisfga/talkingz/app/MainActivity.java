@@ -8,9 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
-import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
-import br.com.luisfga.talkingz.app.core.services.standard.Service;
-import br.com.luisfga.talkingz.app.core.services.standard.restarter.RestartServiceBroadcastReceiver;
+import br.com.luisfga.talkingz.app.services.messaging.MessagingProcessMainClass;
+import br.com.luisfga.talkingz.app.services.messaging.MessagingService;
+import br.com.luisfga.talkingz.app.services.messaging.MessagingServiceRestarterBroadcastReceiver;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
 import br.com.luisfga.talkingz.app.ui.SplashScreenActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -92,12 +92,12 @@ public class MainActivity extends OrchestraAbstractRootActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isMyServiceRunning(Service.class)){
+        if (!isMyServiceRunning(MessagingService.class)){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
+                MessagingServiceRestarterBroadcastReceiver.scheduleJob(getApplicationContext());
             } else {
-                ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(getApplicationContext(),Service.class);
+                MessagingProcessMainClass bck = new MessagingProcessMainClass();
+                bck.launchService(getApplicationContext(), MessagingService.class);
             }
         }
     }

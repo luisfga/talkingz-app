@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app.core.services.standard.restarter;
+package br.com.luisfga.talkingz.app.services.messaging;
 
 import android.app.job.JobParameters;
 import android.content.Context;
@@ -13,24 +13,21 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import br.com.luisfga.talkingz.app.core.services.Globals;
-import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
-import br.com.luisfga.talkingz.app.core.services.standard.Service;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class JobService extends android.app.job.JobService {
-    private static String TAG= JobService.class.getSimpleName();
-    private static RestartServiceBroadcastReceiver restartSensorServiceReceiver;
-    private static JobService instance;
+public class MessagingJobService extends android.app.job.JobService {
+    private static String TAG= MessagingJobService.class.getSimpleName();
+    private static MessagingServiceRestarterBroadcastReceiver restartSensorServiceReceiver;
+    private static MessagingJobService instance;
     private static JobParameters jobParameters;
 
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
-        ProcessMainClass bck = new ProcessMainClass();
-        bck.launchService(this, Service.class);
+        MessagingProcessMainClass bck = new MessagingProcessMainClass();
+        bck.launchService(this, MessagingService.class);
         registerRestarterReceiver();
         instance= this;
-        JobService.jobParameters= jobParameters;
+        MessagingJobService.jobParameters= jobParameters;
 
         return false;
     }
@@ -42,7 +39,7 @@ public class JobService extends android.app.job.JobService {
         // Final decision: in case it is called from installation of new version (i.e. from manifest, the application is
         // null. So we must use context.registerReceiver. Otherwise this will crash and we try with context.getApplicationContext
         if (restartSensorServiceReceiver == null)
-            restartSensorServiceReceiver = new RestartServiceBroadcastReceiver();
+            restartSensorServiceReceiver = new MessagingServiceRestarterBroadcastReceiver();
         else try{
             unregisterReceiver(restartSensorServiceReceiver);
         } catch (Exception e){

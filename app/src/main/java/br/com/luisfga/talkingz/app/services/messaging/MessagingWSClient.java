@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.core;
+package br.com.luisfga.talkingz.app.services.messaging;
 
 import android.content.Context;
 import android.util.Log;
@@ -153,7 +153,7 @@ public class MessagingWSClient {
         });
     }
 
-    interface OrchestraMessageHandler extends MessageHandler.Whole<Orchestration> {
+    public interface OrchestraMessageHandler extends MessageHandler.Whole<Orchestration> {
         void onConnectionOpen();
         void onConnectionClose();
         void onConnectionError(String errorMessage);

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import br.com.luisfga.talkingz.app.core.TalkingzApp;
+import br.com.luisfga.talkingz.app.TalkingzApp;
 
 @SuppressLint("Registered")
 public abstract class OrchestraAbstractRootActivity extends AppCompatActivity {

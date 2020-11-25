@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app.core.services.standard;
+package br.com.luisfga.talkingz.app.services.messaging;
 
 import android.content.Intent;
 import android.os.Build;
@@ -10,21 +10,30 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+import br.com.luisfga.talkingz.app.FileTransferWSClient;
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.core.services.Globals;
-import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
+import br.com.luisfga.talkingz.app.TalkingzApp;
+import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
+import br.com.luisfga.talkingz.app.database.entity.User;
+import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 import br.com.luisfga.talkingz.app.utils.Notification;
+import br.com.luisfga.talkingz.commons.orchestration.Orchestration;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class Service extends android.app.Service {
+public class MessagingService extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
-    private static String TAG = Service.class.getSimpleName();
-    private static Service mCurrentService;
+    private static String TAG = MessagingService.class.getSimpleName();
+    private static MessagingService mCurrentMessagingService;
     private int counter = 0;
 
-    public Service() {
+    public TalkingzClientRoomDatabase getTalkingzDB() {
+        return TalkingzClientRoomDatabase.getDatabase(this);
+    }
+    private User mainUser;
+
+    public MessagingService() {
         super();
     }
 
@@ -32,10 +41,18 @@ public class Service extends android.app.Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
+            this.mainUser = getTalkingzDB().userDAO().getMainUser();
+            if (mainUser != null)
+                connect();
+        });
+
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             restartForeground();
         }
-        mCurrentService = this;
+        mCurrentMessagingService = this;
     }
 
     @Override
@@ -46,8 +63,8 @@ public class Service extends android.app.Service {
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
-            ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(this, Service.class);
+            MessagingProcessMainClass bck = new MessagingProcessMainClass();
+            bck.launchService(this, MessagingService.class);
         }
 
         // make sure you call the startForeground on onStartCommand because otherwise
@@ -60,13 +77,6 @@ public class Service extends android.app.Service {
 
         // return start sticky so if it is killed by android, it will be restarted with Intent null
         return START_STICKY;
-    }
-
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
     }
 
 
@@ -123,6 +133,13 @@ public class Service extends android.app.Service {
         // stoptimertask();
     }
 
+    public static MessagingService getmCurrentService() {
+        return mCurrentMessagingService;
+    }
+
+    public static void setmCurrentService(MessagingService mCurrentMessagingService) {
+        MessagingService.mCurrentMessagingService = mCurrentMessagingService;
+    }
 
     /**
      * static to avoid multiple timers to be created when the service is called several times
@@ -169,13 +186,41 @@ public class Service extends android.app.Service {
         }
     }
 
-    public static Service getmCurrentService() {
-        return mCurrentService;
+    private IBinder binder = new Binder();
+
+    public class Binder extends android.os.Binder {
+        public MessagingService getService(){
+            return mCurrentMessagingService;
+        }
     }
 
-    public static void setmCurrentService(Service mCurrentService) {
-        Service.mCurrentService = mCurrentService;
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return this.binder;
     }
 
+    public MessagingWSClient getWsClient() {
+        return MessagingWSClient.getIntansce(((TalkingzApp)getApplication()));
+    }
 
+    //WEBSOCKET para transferência de arquivos
+    private FileTransferWSClient fileTransferWSClient;
+
+    public void connect() {
+        if (mainUser != null && !getWsClient().isConnectionOpen())
+            getWsClient().conectar(this.getApplicationContext(), mainUser.getId().toString());
+    }
+
+    public boolean isConnectionOpen() {
+        return getWsClient().isConnectionOpen();
+    }
+
+    public void sendCommandOrFeedBack(Orchestration orchestration) {
+        this.getWsClient().sendCommandOrFeedBack(orchestration);
+    }
+
+    public void clear(){
+        MessagingWSClient.clear();
+    }
 }

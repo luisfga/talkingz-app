@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.core.services.messaging;
+package br.com.luisfga.talkingz.app;
 
 import android.content.Context;
 import android.net.Uri;

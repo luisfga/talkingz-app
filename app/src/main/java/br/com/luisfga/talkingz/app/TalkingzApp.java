@@ -1,6 +1,11 @@
-package br.com.luisfga.talkingz.app.core;
+package br.com.luisfga.talkingz.app;
 
 import android.app.Application;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 
@@ -13,10 +18,11 @@ import java.util.UUID;
 
 import android.widget.Toast;
 import androidx.annotation.WorkerThread;
-import br.com.luisfga.talkingz.app.core.services.messaging.FileTransferWSClient;
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 import br.com.luisfga.talkingz.app.database.entity.User;
+import br.com.luisfga.talkingz.app.services.messaging.MessagingService;
+import br.com.luisfga.talkingz.app.services.messaging.MessagingWSClient;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 import br.com.luisfga.talkingz.commons.constants.MessageStatus;
 import br.com.luisfga.talkingz.commons.MessageWrapper;
@@ -53,13 +59,16 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
     }
 
     //WEBSOCKET para mensagens
-    private MessagingWSClient messagingWSClient;
     public MessagingWSClient getWsClient() {
-        return this.messagingWSClient;
+        return this.messagingService.getWsClient();
     }
 
     //WEBSOCKET para transferência de arquivos
     private FileTransferWSClient fileTransferWSClient;
+
+    public boolean isConnectionOpen(){
+        return this.messagingService != null && this.messagingService.isConnectionOpen();
+    }
 
     /* -----------------------------------------------*/
     /* ----------- CONFIG AND INITIALIZATION ---------*/
@@ -91,43 +100,34 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
         super.onCreate();
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
             loadUser();
-//            connect();
+
+            Intent intent = new Intent(this, MessagingService.class);
+            bindService(intent, serviceBoundConnection, Context.BIND_IMPORTANT);
         });
-//        Intent companionServiceIntent = new Intent(this, TalkingzCompanionService.class);
-//        startService(companionServiceIntent);
     }
 
     /* -----------------------------------------------*/
-    /* -------------- MÉTODOS PÚBLICOS ---------------*/
+    /* --------------- SERVICE BINDING ---------------*/
     /* -----------------------------------------------*/
-    public void connect() {
-        this.messagingWSClient = MessagingWSClient.getIntansce(this);
-
-        if (this.mainUser != null && !this.messagingWSClient.isConnectionOpen())
-            this.messagingWSClient.conectar(this.getApplicationContext(), this.mainUser.getId().toString());
-    }
-
-    public boolean isInternetAvailable() {
-        InetAddress ipAddr = null;
-        try {
-            ipAddr = InetAddress.getByName("google.com");
-            return !ipAddr.isReachable(5000);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    MessagingService messagingService;
+    boolean isBound = false;
+    private ServiceConnection serviceBoundConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MessagingService.Binder messageServicebinder = (MessagingService.Binder) service;
+            messagingService = messageServicebinder.getService();
+            isBound = true;
         }
-        //You can replace it with your name
-        return false;
-    }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            isBound = false;
+        }
+    };
 
     /* -----------------------------------------------*/
     /* -------------- MESSAGE HANDLER API ------------*/
     /* -----------------------------------------------*/
-    public boolean isConnectionOpen() {
-        return MessagingWSClient.getIntansce(this).isConnectionOpen();
-    }
-
     @Override
     public void onConnectionOpen() {
         Log.println(Log.DEBUG, TAG, "onConnectionOpen");
@@ -152,7 +152,7 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
                 commandSend.setMessageWrapper(messageWrapper);
 
                 Log.println(Log.DEBUG, TAG, "enviando mensagem");
-                this.messagingWSClient.sendCommandOrFeedBack(commandSend);
+                this.messagingService.sendCommandOrFeedBack(commandSend);
 
                 //enviar arquivo de mídia, se for o caso
                 if (directMessage.getMediaUriPath() != null) {
@@ -174,14 +174,14 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
     @Override
     public void onConnectionClose() {
         Log.println(Log.DEBUG, TAG, "onConnectionClose");
-        MessagingWSClient.clear();
+        this.messagingService.clear();
     }
 
     @Override
     public void onConnectionError(String errorMessage) {
         Log.println(Log.DEBUG, TAG, "onConnectionError");
         Log.println(Log.DEBUG, TAG, errorMessage);
-        MessagingWSClient.clear();
+        this.messagingService.clear();
     }
 
     @Override
@@ -231,7 +231,7 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
         FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
         feedBackCommandConfirmDelivery.setId(commandConfirmDelivery.getId());
         Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
-        this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
+        this.messagingService.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
     }
 
     private void processFeedBackCommandOnLogin(FeedBackCommandLogin feedBackCommandLogin) {
@@ -258,7 +258,7 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
             feedBackMessageReceived.setSenderId(directMessage.getSenderId());
             feedBackMessageReceived.setId(directMessage.getId());
             Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
-            this.messagingWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
+            this.messagingService.sendCommandOrFeedBack(feedBackMessageReceived);
         }
 
         for (UUID uuid : feedBackCommandLogin.getPendingConfirmationUUIDs()) {
@@ -268,7 +268,7 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
             feedBackCommandConfirmDelivery.setId(uuid);
 
             Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
-            this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
+            this.messagingService.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
         }
     }
 
@@ -293,7 +293,7 @@ public class TalkingzApp extends Application implements MessagingWSClient.Orches
         FeedBackCommandDeliver feedBackCommandDeliver = new FeedBackCommandDeliver();
         feedBackCommandDeliver.setSenderId(directMessage.getSenderId());
         feedBackCommandDeliver.setId(directMessage.getId());
-        this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
+        this.messagingService.sendCommandOrFeedBack(feedBackCommandDeliver);
         Log.println(Log.DEBUG, TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
     }
 

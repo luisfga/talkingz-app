@@ -4,7 +4,7 @@ import android.media.MediaActionSound;
 import android.os.Bundle;
 
 import br.com.luisfga.talkingz.app.R;
-import br.com.luisfga.talkingz.app.core.TalkingzApp;
+import br.com.luisfga.talkingz.app.TalkingzApp;
 import br.com.luisfga.talkingz.app.utils.AppDefaultExecutor;
 
 /**
