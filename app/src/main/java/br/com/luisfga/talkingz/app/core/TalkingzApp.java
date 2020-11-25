@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import android.widget.Toast;
 import androidx.annotation.WorkerThread;
-import br.com.luisfga.talkingz.app.core.background.FileTransferWSClient;
+import br.com.luisfga.talkingz.app.core.services.messaging.FileTransferWSClient;
 import br.com.luisfga.talkingz.app.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.app.database.entity.DirectMessage;
 import br.com.luisfga.talkingz.app.database.entity.User;

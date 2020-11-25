@@ -16,19 +16,11 @@
     <!--required by Android 9-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
-    <uses-permission
-        android:name="android.permission.CAMERA"
-        android:required="false" />
-    <uses-permission
-        android:name="android.permission.RECORD_AUDIO"
-        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" android:required="false" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" android:required="false" />
 
-    <uses-feature
-        android:name="android.hardware.camera.autofocus"
-        android:required="false" />
-    <uses-feature
-        android:name="android.hardware.camera.any"
-        android:required="false" />
+    <uses-feature android:name="android.hardware.camera.autofocus" android:required="false" />
+    <uses-feature android:name="android.hardware.camera.any" android:required="false" />
     <uses-feature android:name="android.hardware.camera2.full" />
 
     <application
@@ -66,20 +58,20 @@
             android:theme="@style/Theme.AppCompat.Translucent"
             android:windowSoftInputMode="adjustResize" />
 
-        <service android:name=".restarter.JobService"
+        <service android:name=".core.services.standard.restarter.JobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
+        <!-- Standard [Model] Service -->
         <service
-            android:name=".Service"
+            android:name=".core.services.standard.Service"
             android:clearTaskOnLaunch="true"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance"
             />
 
-
         <receiver
-            android:name=".restarter.RestartServiceBroadcastReceiver"
+            android:name=".core.services.standard.restarter.RestartServiceBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="StartMyServiceAtBootReceiver">

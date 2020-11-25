@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app;
+package br.com.luisfga.talkingz.app.core.services;
 /*
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
@@ -17,28 +17,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
+import br.com.luisfga.talkingz.app.core.services.standard.Service;
 
 public class ProcessMainClass {
     public static final String TAG = ProcessMainClass.class.getSimpleName();
     private static Intent serviceIntent = null;
 
-    public ProcessMainClass() {
-    }
-
-
-    private void setServiceIntent(Context context) {
-        if (serviceIntent == null) {
-            serviceIntent = new Intent(context, Service.class);
-        }
-    }
     /**
      * launching the service
      */
-    public void launchService(Context context) {
+    public void launchService(Context context, Class<Service> serviceClass) {
         if (context == null) {
             return;
         }
-        setServiceIntent(context);
+        setServiceIntent(context, serviceClass);
         // depending on the version of Android we eitehr launch the simple service (version<O)
         // or we start a foreground service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -47,6 +39,12 @@ public class ProcessMainClass {
             context.startService(serviceIntent);
         }
         Log.d(TAG, "ProcessMainClass: start service go!!!!");
+    }
+
+    private void setServiceIntent(Context context, Class<Service> serviceClass) {
+        if (serviceIntent == null) {
+            serviceIntent = new Intent(context,  serviceClass);
+        }
     }
 }
 

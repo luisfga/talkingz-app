@@ -2,8 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app;
-
+package br.com.luisfga.talkingz.app.core.services.standard;
 
 import android.content.Intent;
 import android.os.Build;
@@ -11,14 +10,17 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
-import br.com.luisfga.talkingz.app.utilities.Notification;
+import br.com.luisfga.talkingz.app.R;
+import br.com.luisfga.talkingz.app.core.services.Globals;
+import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
+import br.com.luisfga.talkingz.app.utils.Notification;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class Service extends android.app.Service {
     protected static final int NOTIFICATION_ID = 1337;
-    private static String TAG = "Service";
+    private static String TAG = Service.class.getSimpleName();
     private static Service mCurrentService;
     private int counter = 0;
 
@@ -45,7 +47,7 @@ public class Service extends android.app.Service {
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
             ProcessMainClass bck = new ProcessMainClass();
-            bck.launchService(this);
+            bck.launchService(this, Service.class);
         }
 
         // make sure you call the startForeground on onStartCommand because otherwise
@@ -151,7 +153,7 @@ public class Service extends android.app.Service {
         Log.i(TAG, "initialising TimerTask");
         timerTask = new TimerTask() {
             public void run() {
-                Log.i("in timer", "in timer ++++  " + (counter++));
+                Log.i(TAG, "in timer ++++  " + (counter++));
             }
         };
     }

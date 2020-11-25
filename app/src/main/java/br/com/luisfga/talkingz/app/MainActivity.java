@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.TextView;
-import br.com.luisfga.talkingz.app.restarter.RestartServiceBroadcastReceiver;
+import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
+import br.com.luisfga.talkingz.app.core.services.standard.Service;
+import br.com.luisfga.talkingz.app.core.services.standard.restarter.RestartServiceBroadcastReceiver;
 import br.com.luisfga.talkingz.app.ui.OrchestraAbstractRootActivity;
 import br.com.luisfga.talkingz.app.ui.SplashScreenActivity;
 import com.google.android.material.navigation.NavigationView;
@@ -95,7 +97,7 @@ public class MainActivity extends OrchestraAbstractRootActivity {
                 RestartServiceBroadcastReceiver.scheduleJob(getApplicationContext());
             } else {
                 ProcessMainClass bck = new ProcessMainClass();
-                bck.launchService(getApplicationContext());
+                bck.launchService(getApplicationContext(),Service.class);
             }
         }
     }

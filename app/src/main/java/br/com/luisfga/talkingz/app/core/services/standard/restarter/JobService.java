@@ -2,7 +2,7 @@
  * Copyright (c) 2019. This code has been developed by Fabio Ciravegna, The University of Sheffield. All rights reserved. No part of this code can be used without the explicit written permission by the author
  */
 
-package br.com.luisfga.talkingz.app.restarter;
+package br.com.luisfga.talkingz.app.core.services.standard.restarter;
 
 import android.app.job.JobParameters;
 import android.content.Context;
@@ -13,8 +13,9 @@ import android.os.Handler;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
-import br.com.luisfga.talkingz.app.Globals;
-import br.com.luisfga.talkingz.app.ProcessMainClass;
+import br.com.luisfga.talkingz.app.core.services.Globals;
+import br.com.luisfga.talkingz.app.core.services.ProcessMainClass;
+import br.com.luisfga.talkingz.app.core.services.standard.Service;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobService extends android.app.job.JobService {
@@ -26,7 +27,7 @@ public class JobService extends android.app.job.JobService {
     @Override
     public boolean onStartJob(JobParameters jobParameters) {
         ProcessMainClass bck = new ProcessMainClass();
-        bck.launchService(this);
+        bck.launchService(this, Service.class);
         registerRestarterReceiver();
         instance= this;
         JobService.jobParameters= jobParameters;

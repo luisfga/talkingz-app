@@ -1,4 +1,4 @@
-package br.com.luisfga.talkingz.app.core.background;
+package br.com.luisfga.talkingz.app.core.services.messaging;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import br.com.luisfga.talkingz.app.utils.SSLUtility;
 import org.glassfish.tyrus.client.ClientManager;
 import org.glassfish.tyrus.client.ClientProperties;
 import org.glassfish.tyrus.client.SslEngineConfigurator;
