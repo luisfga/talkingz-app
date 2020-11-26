@@ -1,8 +1,12 @@
 package br.com.luisfga.talkingz.app.services.messaging;
 
-import android.content.Context;
+import android.app.Application;
 import android.util.Log;
 
+import br.com.luisfga.talkingz.app.services.messaging.handling.TalkingzMessageHandler;
+import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandFindContact;
+import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGetFile;
+import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
 import org.glassfish.tyrus.client.ClientManager;
 
 import java.io.IOException;
@@ -29,23 +33,24 @@ public class MessagingWSClient {
 //    private final String SERVER_ENDPOINT_URI = "ws://192.168.0.7:8080/MessagingWSEndpoint";
     private final long DELAY_FOR_PING = 45;
 
-    private final String TAG = "MessagingWSClient";
+    private final String TAG = MessagingWSClient.class.getSimpleName();
     private Session userSession = null;
 
-    private static OrchestraMessageHandler messageHandler;
+    private final TalkingzMessageHandler messageHandler;
     private static MessagingWSClient INSTANCE;
 
-    private Context applicationContext;
-
-    static MessagingWSClient getIntansce(OrchestraMessageHandler handler){
-        messageHandler = handler;
+    static MessagingWSClient getInstance(Application application){
         if (INSTANCE == null || INSTANCE.userSession == null || !INSTANCE.userSession.isOpen()){
-            INSTANCE = new MessagingWSClient();
+            INSTANCE = new MessagingWSClient(application);
         }
         return INSTANCE;
     }
 
-    static void clear() {
+    private MessagingWSClient(Application application){
+        this.messageHandler = new TalkingzMessageHandler(this, application);
+    }
+
+    public void clear() {
         INSTANCE = null;
     }
 
@@ -55,8 +60,17 @@ public class MessagingWSClient {
                 && INSTANCE.userSession.isOpen();
     }
 
-    void conectar(Context applicationContext, String userId) {
-        this.applicationContext = applicationContext;
+    public void setResponseCommandFindContactHandler(ResponseHandler<ResponseCommandFindContact> handler){
+        this.messageHandler.getTalkingzResponseDispatcher().setResponseCommandFindContactHandler(handler);
+    }
+
+    public void setResponseCommandGetFileHandler(ResponseHandler<ResponseCommandGetFile> handler){
+        this.messageHandler.getTalkingzResponseDispatcher().setResponseCommandGetFileHandler(handler);
+    }
+
+    void conectar(String userId) {
+
+        if(isConnectionOpen()) return;
 
         AppDefaultExecutor.getOrchestraBackloadMaxPriorityThread().execute(() -> {
             try {
@@ -75,34 +89,31 @@ public class MessagingWSClient {
 
                 clientManager.connectToServer(this, remoteURI);
 
-                Log.println(Log.DEBUG, TAG, "Conectado ao servidor");
-
-                Executors.newSingleThreadScheduledExecutor().scheduleWithFixedDelay(() -> {
-                    MessagingWSClient.this.sendPingMessage();
-                }, DELAY_FOR_PING, DELAY_FOR_PING, TimeUnit.SECONDS);
-
             } catch (URISyntaxException uriSyntaxException) {
-                messageHandler.onConnectionError("URISyntaxException ao tentar conectar ao servidor");
+                Log.d(TAG, "onConnectionError: URISyntaxException ao tentar conectar ao servidor");
 
             } catch (DeploymentException deploymentException) {
-                messageHandler.onConnectionError("DeploymentException ao tentar conectar ao servidor: " + deploymentException.getMessage());
+                Log.d(TAG, "onConnectionError: DeploymentException ao tentar conectar ao servidor:" + deploymentException.getMessage());
 
             } catch (IOException ioException) {
-                messageHandler.onConnectionError("IOException ao tentar conectar ao servidor: " + ioException.getMessage());
+                Log.d(TAG, "onConnectionError: IOException ao tentar conectar ao servidor: " + ioException.getMessage());
 
 //        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | KeyManagementException sslException) {
-//            messageHandler.onConnectionError("Erro no handshake SSL ao tentar conectar ao servidor: " + sslException.getMessage());
+//            Log.d(TAG, "onConnectionError: Erro no handshake SSL ao tentar conectar ao servidor: " + sslException.getMessage());
 
             } catch (Exception genericException) {
-                messageHandler.onConnectionError("Exception ao tentar conectar ao servidor. " + genericException.getMessage());
+                Log.d(TAG, "onConnectionError: Exception ao tentar conectar ao servidor: " + genericException.getMessage());
+            } finally {
+                if (isConnectionOpen())
+                    Log.println(Log.DEBUG, TAG, "Conectado ao servidor");
             }
         });
 
     }
 
-    /**************
-     * WEBSOCKET API
-     **************/
+    /**----------------------------------------------
+    ------------------ WEBSOCKET API ----------------
+    -----------------------------------------------*/
     @OnOpen
     public void onOpen(Session userSession, EndpointConfig config) {
         this.userSession = userSession;
@@ -111,15 +122,15 @@ public class MessagingWSClient {
 
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
+        Log.d(TAG, "Connection closed. Reason: " + reason.toString());
         this.userSession = null;
-        this.messageHandler.onConnectionClose();
         clear();
-        Log.println(Log.DEBUG, TAG, "Conexão fechada. Reason: " + reason.toString());
     }
 
     @OnError
     public void onError(Throwable error, Session session) {
         Log.e(TAG, error.getMessage());
+        clear();
     }
 
     @OnMessage
@@ -137,12 +148,12 @@ public class MessagingWSClient {
         AppDefaultExecutor.getOrchestraLowPriorityNetworkingThreadPool().execute(() -> userSession.getAsyncRemote().sendObject(orchestration));
     }
 
-    public void sendPingMessage(){
+    public void sendKeepAlivePing(){
 
         //check here because the caller maybe the Scheduler and in the mean time the connection can be closed.
         if (!isConnectionOpen()) return;
 
-        ByteBuffer pingMsg = ByteBuffer.wrap(new Long(System.currentTimeMillis()).toString().getBytes());
+        ByteBuffer pingMsg = ByteBuffer.wrap(Long.valueOf(System.currentTimeMillis()).toString().getBytes());
         AppDefaultExecutor.getOrchestraLowPriorityNetworkingThreadPool().execute(() -> {
             try {
                 Log.d(TAG, "Sending ping");
@@ -155,7 +166,5 @@ public class MessagingWSClient {
 
     public interface OrchestraMessageHandler extends MessageHandler.Whole<Orchestration> {
         void onConnectionOpen();
-        void onConnectionClose();
-        void onConnectionError(String errorMessage);
     }
 }

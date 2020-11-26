@@ -246,7 +246,7 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
             Log.i(TAG, "Enviando mensagem");
             CommandSend commandSend = new CommandSend();
             commandSend.setMessageWrapper(messageWrapper);
-            getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandSend);
+            getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandSend);
 
             //enviar arquivo de mídia, se for o caso
             if (directMessage.getMediaUriPath() != null) {
@@ -267,8 +267,8 @@ public class DirectMessageActivity extends OrchestraAbstractRootActivity impleme
     void sendCommandGetFile(String downloadToken) {
         CommandGetFile commandGetFile = new CommandGetFile();
         commandGetFile.setDownloadToken(downloadToken);
-        getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandGetFile);
-        getTalkinzApp().setResponseCommandGetFileHandler(this);
+        getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandGetFile);
+        getTalkinzApp().getMessagingService().getWsClient().setResponseCommandGetFileHandler(this);
     }
 
     @Override

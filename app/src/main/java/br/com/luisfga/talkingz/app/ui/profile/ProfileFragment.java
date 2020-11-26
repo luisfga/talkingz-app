@@ -179,7 +179,7 @@ public class ProfileFragment extends OrchestraAbstractRootFragment {
             CommandSyncUser commandSyncUser = new CommandSyncUser();
             commandSyncUser.setUserWrapper(userWrapper);
 
-            getTalkingzApp().getWsClient().sendCommandOrFeedBack(commandSyncUser);
+            getTalkingzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandSyncUser);
 
         } else {
             DialogUtility.showConnectionNotAvailableInfo(getContext());

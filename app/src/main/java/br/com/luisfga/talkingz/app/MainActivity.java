@@ -92,25 +92,11 @@ public class MainActivity extends OrchestraAbstractRootActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isMyServiceRunning(MessagingService.class)){
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                MessagingServiceRestarterBroadcastReceiver.scheduleJob(getApplicationContext());
-            } else {
-                MessagingProcessMainClass bck = new MessagingProcessMainClass();
-                bck.launchService(getApplicationContext(), MessagingService.class);
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            MessagingServiceRestarterBroadcastReceiver.scheduleJob(getApplicationContext());
+        } else {
+            MessagingProcessMainClass bck = new MessagingProcessMainClass();
+            bck.launchService(getApplicationContext(), MessagingService.class);
         }
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.d ("isMyServiceRunning?", true+"");
-                return true;
-            }
-        }
-        Log.d ("isMyServiceRunning?", false+"");
-        return false;
     }
 }

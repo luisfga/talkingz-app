@@ -70,7 +70,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
         negativeButton = findViewById(R.id.negativeButton);
         negativeButton.setOnClickListener(v -> finish());
 
-        getTalkinzApp().setResponseCommandFindContactHandler(this);
+        getTalkinzApp().getMessagingService().getWsClient().setResponseCommandFindContactHandler(this);
     }
 
     private void adicionarContato(User contact) {
@@ -163,7 +163,7 @@ public class AddContactActivity extends OrchestraAbstractRootActivity implements
                     //Busca Contato
                     CommandFindContact commandFindContact = new CommandFindContact();
                     commandFindContact.setSearchToken(token);
-                    getTalkinzApp().getWsClient().sendCommandOrFeedBack(commandFindContact);
+                    getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandFindContact);
 
                     //Aguarda retorno - tratado no método handle
 
