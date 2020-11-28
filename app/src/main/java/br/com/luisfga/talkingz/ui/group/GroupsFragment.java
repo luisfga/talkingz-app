@@ -95,7 +95,7 @@ public class GroupsFragment extends TalkingzAbstractRootFragment implements Touc
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
 
-        Log.println(Log.INFO, "GroupsFragment", "onSwiped Fired!");
+        //Log.i(i( "GroupsFragment", "onSwiped Fired!");
 
         if (viewHolder instanceof GroupsRecyclerAdapter.ListItemViewHolder) {
 

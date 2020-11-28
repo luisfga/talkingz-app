@@ -74,7 +74,7 @@ public class MessagingJobService extends android.app.job.JobService {
      */
     @Override
     public boolean onStopJob(JobParameters jobParameters) {
-        Log.i(TAG, "Stopping job");
+        //Log.i(TAG, "Stopping job");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
         // give the time to run
@@ -100,7 +100,7 @@ public class MessagingJobService extends android.app.job.JobService {
             } catch (Exception e){
                 // not registered
             }
-            Log.i(TAG, "Finishing job");
+            //Log.i(TAG, "Finishing job");
             instance.jobFinished(jobParameters, true);
         }
     }

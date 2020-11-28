@@ -39,12 +39,12 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
     /* -----------------------------------------------*/
     @Override
     public void onConnectionOpen() {
-        Log.println(Log.DEBUG, TAG, "onConnectionOpen");
+        //Log.d(TAG, "onConnectionOpen");
 
         if (talkingzApp.getMainUser() != null) {
             //enviar pendências
             List<DirectMessage> pendentesDeEnvio = talkingzApp.getTalkingzDB().directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
-            Log.println(Log.DEBUG, TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
+            //Log.i(d( TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
             for (DirectMessage directMessage: pendentesDeEnvio) {
 
                 MessageWrapper messageWrapper = new MessageWrapper();
@@ -60,7 +60,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
                 CommandSend commandSend = new CommandSend();
                 commandSend.setMessageWrapper(messageWrapper);
 
-                Log.println(Log.DEBUG, TAG, "enviando mensagem");
+                //Log.i(d( TAG, "enviando mensagem");
                 messagingWSClient.sendCommandOrFeedBack(commandSend);
 
                 //enviar arquivo de mídia, se for o caso
@@ -104,7 +104,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
 
             //retorno meramente informativo sem relevância
         } else if (orchestration instanceof FeedBackCommandSyncUser) {
-            Log.println(Log.DEBUG, TAG, "Usuário sincronizado no servidor");
+            //Log.i(d( TAG, "Usuário sincronizado no servidor");
         }
     }
 
@@ -116,22 +116,22 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
                 feedBackCommandSend.getId(),
                 new Timestamp(feedBackCommandSend.getSentTimeInMillis()),
                 MessageStatus.MSG_STATUS_ON_TRAFFIC);
-        Log.println(Log.DEBUG, TAG, "FeedBack received: FeedBackCommandSend");
+        //Log.i(d( TAG, "FeedBack received: FeedBackCommandSend");
     }
 
     private void processCommandConfirmDelivery(CommandConfirmDelivery commandConfirmDelivery) {
         this.talkingzApp.getTalkingzDB().directMessageDAO().updateMessageStatus(commandConfirmDelivery.getId(), MessageStatus.MSG_STATUS_DELIVERED);
 
-        Log.println(Log.DEBUG, TAG, "Confirmação recebida da mensagem: " + commandConfirmDelivery.getId());
+        //Log.i(d( TAG, "Confirmação recebida da mensagem: " + commandConfirmDelivery.getId());
 
         FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
         feedBackCommandConfirmDelivery.setId(commandConfirmDelivery.getId());
-        Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
+        //Log.i(d( TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + feedBackCommandConfirmDelivery.getId());
         this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
     }
 
     private void processFeedBackCommandOnLogin(FeedBackCommandLogin feedBackCommandLogin) {
-        Log.println(Log.DEBUG, TAG, "processFeedBackCommandOnLogin");
+        //Log.i(d( TAG, "processFeedBackCommandOnLogin");
 
         for (MessageWrapper messageWrapper : feedBackCommandLogin.getPendingMessages()) {
             DirectMessage directMessage = new DirectMessage();
@@ -148,12 +148,12 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
 
             directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
             this.talkingzApp.getTalkingzDB().directMessageDAO().insert(directMessage);
-            Log.println(Log.DEBUG, TAG, "Mensagem recebida: " + directMessage.getContent());
+            //Log.i(d( TAG, "Mensagem recebida: " + directMessage.getContent());
 
             FeedBackCommandDeliver feedBackMessageReceived = new FeedBackCommandDeliver();
             feedBackMessageReceived.setSenderId(directMessage.getSenderId());
             feedBackMessageReceived.setId(directMessage.getId());
-            Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
+            //Log.i(d( TAG, "Enviando FeedBackCommandDeliver da mensagem: " + feedBackMessageReceived.getId());
             this.messagingWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
         }
 
@@ -163,7 +163,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
             FeedBackCommandConfirmDelivery feedBackCommandConfirmDelivery = new FeedBackCommandConfirmDelivery();
             feedBackCommandConfirmDelivery.setId(uuid);
 
-            Log.println(Log.DEBUG, TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
+            //Log.i(d( TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
             this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
         }
     }
@@ -183,14 +183,14 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessage
 
         directMessage.setStatus(MessageStatus.MSG_STATUS_RECEIVED); //salva localmente com status RECEBIDA
         this.talkingzApp.getTalkingzDB().directMessageDAO().insert(directMessage);
-        Log.println(Log.DEBUG, TAG, "Mensagem recebida: " + directMessage.getContent());
+        //Log.i(d( TAG, "Mensagem recebida: " + directMessage.getContent());
 
         //send feedback
         FeedBackCommandDeliver feedBackCommandDeliver = new FeedBackCommandDeliver();
         feedBackCommandDeliver.setSenderId(directMessage.getSenderId());
         feedBackCommandDeliver.setId(directMessage.getId());
         this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
-        Log.println(Log.DEBUG, TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
+        //Log.i(d( TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
     }
 
 }

@@ -88,22 +88,22 @@ public class MessagingWSClient {
                 clientManager.connectToServer(this, remoteURI);
 
             } catch (URISyntaxException uriSyntaxException) {
-                Log.d(TAG, "onConnectionError: URISyntaxException ao tentar conectar ao servidor");
+                //Log.d(TAG, "onConnectionError: URISyntaxException ao tentar conectar ao servidor");
 
             } catch (DeploymentException deploymentException) {
-                Log.d(TAG, "onConnectionError: DeploymentException ao tentar conectar ao servidor:" + deploymentException.getMessage());
+                //Log.d(TAG, "onConnectionError: DeploymentException ao tentar conectar ao servidor:" + deploymentException.getMessage());
 
             } catch (IOException ioException) {
-                Log.d(TAG, "onConnectionError: IOException ao tentar conectar ao servidor: " + ioException.getMessage());
+                //Log.d(TAG, "onConnectionError: IOException ao tentar conectar ao servidor: " + ioException.getMessage());
 
 //        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | KeyManagementException sslException) {
 //            Log.d(TAG, "onConnectionError: Erro no handshake SSL ao tentar conectar ao servidor: " + sslException.getMessage());
 
             } catch (Exception genericException) {
-                Log.d(TAG, "onConnectionError: Exception ao tentar conectar ao servidor: " + genericException.getMessage());
+                //Log.d(TAG, "onConnectionError: Exception ao tentar conectar ao servidor: " + genericException.getMessage());
             } finally {
-                if (isConnectionOpen())
-                    Log.println(Log.DEBUG, TAG, "Conectado ao servidor");
+//                if (isConnectionOpen())
+                    //Log.d(TAG, "Conectado ao servidor");
             }
         });
 
@@ -120,14 +120,14 @@ public class MessagingWSClient {
 
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
-        Log.d(TAG, "Connection closed. Reason: " + reason.toString());
+        //Log.d(TAG, "Connection closed. Reason: " + reason.toString());
         this.userSession = null;
         clear();
     }
 
     @OnError
     public void onError(Throwable error, Session session) {
-        Log.e(TAG, error.getMessage());
+        //Log.e(TAG, error.getMessage());
         clear();
     }
 
@@ -139,7 +139,7 @@ public class MessagingWSClient {
     @OnMessage
     public void onMessage(PongMessage pongMessage) {
         byte[] pongMessageBytes = pongMessage.getApplicationData().array();
-        Log.d(TAG, "Pong message received: " + new String(pongMessageBytes));
+        //Log.d(TAG, "Pong message received: " + new String(pongMessageBytes));
     }
 
     public void sendCommandOrFeedBack(Orchestration orchestration) {
@@ -154,10 +154,10 @@ public class MessagingWSClient {
         ByteBuffer pingMsg = ByteBuffer.wrap(Long.valueOf(System.currentTimeMillis()).toString().getBytes());
         AppDefaultExecutor.getTalkingzLowPriorityNetworkingThreadPool().execute(() -> {
             try {
-                Log.d(TAG, "Sending ping");
+                //Log.d(TAG, "Sending ping");
                 userSession.getAsyncRemote().sendPing(pingMsg);
             } catch (IOException e) {
-                Log.e(TAG,"Error on trying to ping.", e);
+                //Log.e(TAG,"Error on trying to ping.", e);
             }
         });
     }

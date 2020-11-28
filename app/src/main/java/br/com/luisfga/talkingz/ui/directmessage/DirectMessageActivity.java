@@ -206,7 +206,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
     }
 
     private void saveNewMessage(String msg, byte[] mediaThumbnailBytes, Uri mediaUri, byte mimeType) {
-        Log.i(TAG, "saveNewMessage");
+        //Log.i(i(TAG, "saveNewMessage");
         //#ProcessoMensagem#1 - salva a imagem no banco do cliente
         DirectMessage directMessage = new DirectMessage();
 
@@ -226,11 +226,11 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
             directMessage.setMediaThumbnail(mediaThumbnailBytes);
         }
 
-        Log.i(TAG,"Salvando mensagem");
+        //Log.i(i(TAG,"Salvando mensagem");
         directMessageViewModel.insert(directMessage);
-        Log.i(TAG,"Mensagem salva");
+        //Log.i(i(TAG,"Mensagem salva");
 
-        Log.i(TAG, "Mensagem pronta para ser enviada");
+        //Log.i(i(TAG, "Mensagem pronta para ser enviada");
         if (getTalkinzApp().isConnectionOpen()) {
             //montando mensagem websocket
             MessageWrapper messageWrapper = new MessageWrapper();
@@ -243,7 +243,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
             messageWrapper.setDownloadToken(directMessage.getMediaDownloadToken());
             messageWrapper.setMediaThumbnail(mediaThumbnailBytes);
 
-            Log.i(TAG, "Enviando mensagem");
+            //Log.i(i(TAG, "Enviando mensagem");
             CommandSend commandSend = new CommandSend();
             commandSend.setMessageWrapper(messageWrapper);
             getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandSend);

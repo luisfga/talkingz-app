@@ -40,7 +40,7 @@ public class MessagingServiceRestarterBroadcastReceiver extends BroadcastReceive
             return versionCode;
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            //Log.e(TAG, e.getMessage());
         }
         return 0;
     }
@@ -49,7 +49,7 @@ public class MessagingServiceRestarterBroadcastReceiver extends BroadcastReceive
 
     @Override
     public void onReceive(final Context context, Intent intent) {
-        Log.d(TAG, "about to start timer " + context.toString());
+        //Log.d(TAG, "about to start timer " + context.toString());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             scheduleJob(context);
         } else {
@@ -78,7 +78,7 @@ public class MessagingServiceRestarterBroadcastReceiver extends BroadcastReceive
 
     public static void reStartTracker(Context context) {
         // restart the never ending service
-        Log.i(TAG, "Restarting tracker");
+        //Log.i(TAG, "Restarting tracker");
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         context.sendBroadcast(broadcastIntent);
     }
