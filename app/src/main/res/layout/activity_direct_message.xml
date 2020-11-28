@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.luisfga.talkingz.app.ui.directmessage.DirectMessageActivity"
+    tools:context="br.com.luisfga.talkingz.ui.directmessage.DirectMessageActivity"
     android:background="@drawable/chat_background"
     android:animateLayoutChanges="true">
 
