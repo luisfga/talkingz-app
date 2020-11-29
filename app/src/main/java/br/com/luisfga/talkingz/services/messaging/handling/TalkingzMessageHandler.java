@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
-public class TalkingzMessageHandler implements MessagingWSClient.TalkingzMessageHandler {
+public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchestrationMessageHandler {
 
     private final String TAG = TalkingzMessageHandler.class.getSimpleName();
 

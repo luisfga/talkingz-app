@@ -3,10 +3,10 @@ package br.com.luisfga.talkingz.services.messaging;
 import android.app.Application;
 import android.util.Log;
 
-import br.com.luisfga.talkingz.services.messaging.handling.TalkingzMessageHandler;
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandFindContact;
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGetFile;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
+import br.com.luisfga.talkingz.services.messaging.handling.TalkingzMessageHandler;
 import org.glassfish.tyrus.client.ClientManager;
 
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class MessagingWSClient {
     private final String TAG = MessagingWSClient.class.getSimpleName();
     private Session userSession = null;
 
-    private final br.com.luisfga.talkingz.services.messaging.handling.TalkingzMessageHandler messageHandler;
+    private final TalkingzMessageHandler messageHandler;
     private static MessagingWSClient INSTANCE;
 
     static MessagingWSClient getInstance(Application application){
@@ -45,7 +45,7 @@ public class MessagingWSClient {
     }
 
     private MessagingWSClient(Application application){
-        this.messageHandler = new br.com.luisfga.talkingz.services.messaging.handling.TalkingzMessageHandler(this, application);
+        this.messageHandler = new TalkingzMessageHandler(this, application);
     }
 
     public void clear() {
@@ -102,7 +102,7 @@ public class MessagingWSClient {
             } catch (Exception genericException) {
                 Log.d(TAG, "onConnectionError: Exception ao tentar conectar ao servidor: " + genericException.getMessage());
             } finally {
-//                if (isConnectionOpen())
+                if (isConnectionOpen())
                     Log.d(TAG, "Conectado ao servidor");
             }
         });
@@ -162,7 +162,7 @@ public class MessagingWSClient {
         });
     }
 
-    public interface TalkingzMessageHandler extends MessageHandler.Whole<Orchestration> {
+    public interface TalkingzOrchestrationMessageHandler extends MessageHandler.Whole<Orchestration> {
         void onConnectionOpen();
     }
 }
