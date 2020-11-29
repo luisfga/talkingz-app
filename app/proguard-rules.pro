@@ -19,3 +19,19 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#-----------------
+# Talkingz Configs
+#-----------------
+#-keep,includedescriptorclasses class br.com.luisfga.talkingz.services.messaging.MessagingWSClient$* { *; }
+#-keep,includedescriptorclasses class br.com.luisfga.talkingz.services.messaging.FileTransferWSClient$* { *; }
+
+#-keepattributes Signature,InnerClasses,*Annotation*
+#-keep,includedescriptorclasses  class org.glassfish.tyrus.** {  *; }
+#-keep,includedescriptorclasses  class org.glassfish.grizzly.** { *; }
+#-keep,includedescriptorclasses  class javax.websocket.** { *; }
+
+#-keep,includedescriptorclasses  class br.com.luisfga.** { *; }
+
+#-printusage build/usage.txt
+#-printseeds build/seeds.txt
