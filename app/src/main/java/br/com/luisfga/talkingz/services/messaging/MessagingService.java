@@ -87,13 +87,13 @@ public class MessagingService extends android.app.Service {
                 @Override
                 public void onAvailable(@NonNull Network network) {
                     super.onAvailable(network);
-                    //Log.d("ConnectivityManager", "Connection available. Connecting to server!");
+                    Log.d("ConnectivityManager", "Connection available. Connecting to server!");
                     connect();
                 }
                 @Override
                 public void onLost(@NonNull Network network) {
                     super.onLost(network);
-                    //Log.d("ConnectivityManager", "Connection UNavailable. Clearing data!");
+                    Log.d("ConnectivityManager", "Connection UNavailable. Clearing data!");
                     clearWebSocket();
                 }
             });
@@ -109,7 +109,7 @@ public class MessagingService extends android.app.Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        //Log.d(TAG, "restarting Service !!");
+        Log.d(TAG, "restarting Service !!");
 
         // it has been killed by Android and now it is restarted. We must make sure to have reinitialised everything
         if (intent == null) {
@@ -132,7 +132,7 @@ public class MessagingService extends android.app.Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //Log.i(TAG, "onDestroy called");
+        Log.d(TAG, "onDestroy called");
         // restart the never ending service
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
@@ -150,14 +150,14 @@ public class MessagingService extends android.app.Service {
      */
     public void restartForeground() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //Log.i(TAG, "restarting foreground");
+            Log.d(TAG, "restarting foreground");
             try {
                 Notification notification = new Notification();
                 startForeground(NOTIFICATION_ID, notification.setNotification(this, "Service notification", "This is the service's notification", R.drawable.ic_launcher_foreground));
-                //Log.i(TAG, "restarting foreground successful");
+                Log.d(TAG, "restarting foreground successful");
                 startTimer();
             } catch (Exception e) {
-                //Log.e(TAG, "Error in notification " + e.getMessage());
+                Log.e(TAG, "Error in notification " + e.getMessage());
             }
         }
     }
@@ -171,7 +171,7 @@ public class MessagingService extends android.app.Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-        //Log.i(TAG, "onTaskRemoved called");
+        Log.d(TAG, "onTaskRemoved called");
         // restart the never ending service
         Intent broadcastIntent = new Intent(Globals.RESTART_INTENT);
         sendBroadcast(broadcastIntent);
@@ -189,7 +189,7 @@ public class MessagingService extends android.app.Service {
     private int counter = 0;
 
     public void startTimer() {
-        //Log.i(TAG, "Starting timer");
+        Log.d(TAG, "Starting timer");
         counter = 0;
         //set a new Timer - if one is already running, cancel it to avoid two running at the same time
         stoptimertask();//if there is one
@@ -198,7 +198,7 @@ public class MessagingService extends android.app.Service {
         //initialize the TimerTask's job
         initializeTimerTask();
 
-        //Log.i(TAG, "Scheduling...");
+        Log.d(TAG, "Scheduling...");
 
         //schedule the timer, to wake up every 1 second
         timer.schedule(timerTask, PERIOD, PERIOD); //
@@ -208,14 +208,14 @@ public class MessagingService extends android.app.Service {
      * it sets the timer to print the counter every x seconds
      */
     public void initializeTimerTask() {
-        //Log.i(TAG, "initialising TimerTask");
+        Log.d(TAG, "initialising TimerTask");
         timerTask = new TimerTask() {
             public void run() {
                 if (isConnectionOpen()) {
-                    //Log.d(TAG, "Service status check n°"+ (counter++) +": Running beautifully.");
+                    Log.d(TAG, "Service status check n°"+ (counter++) +": Running beautifully.");
                     MessagingWSClient.getInstance(getApplication()).sendKeepAlivePing();
                 } else {
-                    //Log.d(TAG, "Service status check n°"+ (counter++) +"): Running, but offline. Trying to reconnect...");
+                    Log.d(TAG, "Service status check n°"+ (counter++) +"): Running, but offline. Trying to reconnect...");
                     connect();
                 }
             }

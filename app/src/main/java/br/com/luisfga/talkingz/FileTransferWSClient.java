@@ -97,22 +97,22 @@ public class FileTransferWSClient {
 
             clientManager.connectToServer(this, remoteURI);
 
-            //Log.i( TAG, "Conectado ao servidor");
+            Log.d( TAG, "Conectado ao servidor");
 
         } catch (URISyntaxException uriSyntaxException) {
-            //Log.e(TAG, "URISyntaxException ao tentar criar canal de transferência: "+ uriSyntaxException.getMessage());
+            Log.e(TAG, "URISyntaxException ao tentar criar canal de transferência: "+ uriSyntaxException.getMessage());
 
         } catch (DeploymentException deploymentException) {
-            //Log.e(TAG, "DeploymentException ao tentar conectar ao servidor: " + deploymentException.getMessage());
+            Log.e(TAG, "DeploymentException ao tentar conectar ao servidor: " + deploymentException.getMessage());
 
         } catch (IOException ioException) {
-            //Log.e(TAG, "IOException ao tentar conectar ao servidor: " + ioException.getMessage());
+            Log.e(TAG, "IOException ao tentar conectar ao servidor: " + ioException.getMessage());
 
 //        } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | KeyManagementException sslException) {
 //            Log.e(TAG, "Erro no handshake SSL ao tentar conectar ao servidor: " + sslException.getMessage());
 
         } catch (Exception genericException) {
-            //Log.e(TAG, "Exception ao tentar conectar ao servidor. " + genericException.getMessage());
+            Log.e(TAG, "Exception ao tentar conectar ao servidor. " + genericException.getMessage());
         }
     }
 
@@ -129,12 +129,12 @@ public class FileTransferWSClient {
     @OnClose
     public void onClose(Session userSession, CloseReason reason) {
         this.userSession = null;
-        //Log.i( TAG, "Conexão fechada. Reason: " + reason.toString());
+        Log.d( TAG, "Conexão fechada. Reason: " + reason.toString());
     }
 
     @OnError
     public void onError(Throwable error, Session session) {
-        //Log.e(TAG, error.getMessage());
+        Log.e(TAG, error.getMessage());
     }
 
     @OnMessage
@@ -146,7 +146,7 @@ public class FileTransferWSClient {
             fos.write(sharedFileDTO.getBytes());
             fos.close();
             session.close(new CloseReason(CloseReason.CloseCodes.GOING_AWAY, "Download concluído"));
-            //Log.i(TAG, "Download concluído");
+            Log.d(TAG, "Download concluído");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -176,7 +176,7 @@ public class FileTransferWSClient {
     private class BinarySendHandler implements SendHandler {
         @Override
         public void onResult(SendResult result) {
-            //Log.i(TAG, "onResult: Arquivo enviado");
+            Log.d(TAG, "onResult: Arquivo enviado");
         }
     }
 }

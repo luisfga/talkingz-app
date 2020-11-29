@@ -26,15 +26,15 @@ public class TalkingzApp extends Application  {
 
     @Override
     public void onCreate() {
-        //Log.d(TAG, "onCreate");
+        Log.d(TAG, "onCreate");
         super.onCreate();
         AppDefaultExecutor.getTalkingzBackloadMaxPriorityThread().execute(() -> {
-            //Log.d(TAG, "About to load user");
+            Log.d(TAG, "About to load user");
             loadUser(); //this loading here is crucial
             Intent intent = new Intent(this, MessagingService.class);
-            //Log.d(TAG, "Starting MessagingService from TalkingzApp.onCreate()");
+            Log.d(TAG, "Starting MessagingService from TalkingzApp.onCreate()");
             startService(intent);
-            //Log.d(TAG, "Binding to the service from TalkingzApp.onCreate()");
+            Log.d(TAG, "Binding to the service from TalkingzApp.onCreate()");
             bindService(intent, serviceBoundConnection, Context.BIND_IMPORTANT);
         });
     }
@@ -72,7 +72,7 @@ public class TalkingzApp extends Application  {
             Looper.prepare();
             Toast.makeText(this, "Novo usuário criado: " + mainUser.getId().toString(), Toast.LENGTH_LONG).show();
         }
-        //Log.d(TAG, "loadUser(): User loaded? " + (mainUser != null));
+        Log.d(TAG, "loadUser(): User loaded? " + (mainUser != null));
     }
 
     /* -----------------------------------------------*/

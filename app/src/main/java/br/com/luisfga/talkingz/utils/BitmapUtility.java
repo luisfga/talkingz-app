@@ -48,7 +48,7 @@ public class BitmapUtility {
             return bitmap;
 
         } catch (IOException e) {
-            //Log.i(e(TAG, "Erro ao tentar carregar Bitmap", e);
+            Log.d(TAG, "Erro ao tentar carregar Bitmap", e);
         }
         return null;
     }

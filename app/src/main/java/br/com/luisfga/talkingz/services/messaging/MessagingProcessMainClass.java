@@ -37,7 +37,7 @@ public class MessagingProcessMainClass {
         } else {
             context.startService(serviceIntent);
         }
-        //Log.d(TAG, "start service !!!!");
+        Log.d(TAG, "start service !!!!");
     }
 
     private void setServiceIntent(Context context, Class<?> serviceClass) {
