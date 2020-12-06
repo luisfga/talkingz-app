@@ -1,3 +1,5 @@
+- Função para fixar mensagens (Pin)
+
 - Servidor retornar configuração um configuração logo no login.
     Possíveis itens de configuração:
         - Frequencia de ping;
