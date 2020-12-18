@@ -8,8 +8,8 @@ android {
         applicationId "br.com.luisfga.talkingz"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 2
-        versionName "0.1.0"
+        versionCode 4
+        versionName "0.1.007"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
