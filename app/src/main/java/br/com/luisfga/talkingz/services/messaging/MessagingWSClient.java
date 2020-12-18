@@ -9,10 +9,17 @@ import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.Respon
 import br.com.luisfga.talkingz.services.messaging.handling.TalkingzMessageHandler;
 import org.glassfish.tyrus.client.ClientManager;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.websocket.*;
 
@@ -27,8 +34,8 @@ import br.com.luisfga.talkingz.commons.orchestration.OrchestrationEncoder;
 public class MessagingWSClient {
 
 //    private final String SERVER_ENDPOINT_URI = "wss://192.168.0.7:8443/MessagingWSEndpoint";
-    private final String SERVER_ENDPOINT_URI = "ws://talkingz.herokuapp.com/MessagingWSEndpoint";
-//    private final String SERVER_ENDPOINT_URI = "ws://192.168.0.7:8080/MessagingWSEndpoint";
+//    private final String SERVER_ENDPOINT_URI = "ws://talkingz.herokuapp.com/MessagingWSEndpoint";
+    private final String SERVER_ENDPOINT_URI = "ws://10.0.2.2:8080/MessagingWSEndpoint";
     private final long DELAY_FOR_PING = 45;
 
     private final String TAG = MessagingWSClient.class.getSimpleName();
@@ -79,6 +86,9 @@ public class MessagingWSClient {
                 ClientManager clientManager = ClientManager.createClient();
 //            clientManager.getProperties().put("org.glassfish.tyrus.incomingBufferSize", 110000000); Transferência de arquivo movida para FileTransferWSClient
                 clientManager.setAsyncSendTimeout(-1);
+                clientManager.setDefaultMaxTextMessageBufferSize(110000000);
+                clientManager.setDefaultMaxBinaryMessageBufferSize(110000000);
+                clientManager.setDefaultMaxSessionIdleTimeout(-1);
 
                 //SSL Configuration
 //            SslEngineConfigurator sslEngineConfigurator = new SslEngineConfigurator(SSLUtility.getConfiguredSSLContext(applicationContext), true, false, false);
@@ -92,6 +102,7 @@ public class MessagingWSClient {
 
             } catch (DeploymentException deploymentException) {
                 Log.d(TAG, "onConnectionError: DeploymentException ao tentar conectar ao servidor:" + deploymentException.getMessage());
+                deploymentException.printStackTrace();
 
             } catch (IOException ioException) {
                 Log.d(TAG, "onConnectionError: IOException ao tentar conectar ao servidor: " + ioException.getMessage());
@@ -132,8 +143,8 @@ public class MessagingWSClient {
     }
 
     @OnMessage
-    public void onMessage(Orchestration orchestration) {
-        this.messageHandler.onMessage(orchestration);
+    public void onMessage(ByteBuffer byteBuffer, boolean isLastFrame) {
+        this.messageHandler.onMessage(byteBuffer, isLastFrame);
     }
 
     @OnMessage
@@ -143,7 +154,58 @@ public class MessagingWSClient {
     }
 
     public void sendCommandOrFeedBack(Orchestration orchestration) {
-        AppDefaultExecutor.getTalkingzLowPriorityNetworkingThreadPool().execute(() -> userSession.getAsyncRemote().sendObject(orchestration));
+//        AppDefaultExecutor.getTalkingzLowPriorityNetworkingThreadPool().execute(() ->
+//                userSession.getAsyncRemote().sendObject(orchestration)
+//        );
+        Log.d("MessagingWSClient", "sendCommandOrFeedBack");
+        /* INÍCIO DA NOVA IMPLEMENTAÇÃO. ENVIO DE MENSAGENS FRAME POR FRAME */
+        AppDefaultExecutor.getTalkingzLowPriorityNetworkingThreadPool().execute(() -> {
+
+            try {
+                ByteBuffer bb = ByteBuffer.wrap(extractBytes(orchestration));
+
+                final int DEFAULT_FRAME_SIZE = 65536;
+                Log.d("MessagingWSClient", "Remaining bytes = " + bb.remaining());
+                while (bb.remaining() > DEFAULT_FRAME_SIZE){
+                    byte[] frame = new byte[DEFAULT_FRAME_SIZE];
+                    bb.get(frame, 0, DEFAULT_FRAME_SIZE);
+                    ByteBuffer wrappedFrame = ByteBuffer.wrap(frame);
+                    userSession.getBasicRemote().sendBinary(wrappedFrame, false);
+                }
+
+                if (bb.remaining() > 0) {
+                    byte[] lastFrame = new byte[bb.remaining()];
+                    bb.get(lastFrame, 0, bb.remaining());
+                    ByteBuffer wrappedFrame = ByteBuffer.wrap(lastFrame);
+                    userSession.getBasicRemote().sendBinary(wrappedFrame, true);
+                }
+
+                Log.d("MessagingWSClient", "Comando enviado: "
+                        + orchestration.getType()
+                        + " ("
+                        + new SimpleDateFormat("HH:mm:ss", new Locale("pt","BR")).format(new Date())
+                        +")");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        });
+        /* FIM DA NOVA IMPLEMENTAÇÃO. ENVIO DE MENSAGENS FRAME POR FRAME */
+    }
+
+    private byte[] extractBytes(Object obj){
+        try {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(obj);
+            oos.flush();
+            byte[] objectBytes = bos.toByteArray();
+            Log.d("MessagingWSClient", "Object bytes length = " + objectBytes.length);
+            return objectBytes;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public void sendKeepAlivePing(){
@@ -162,7 +224,7 @@ public class MessagingWSClient {
         });
     }
 
-    public interface TalkingzOrchestrationMessageHandler extends MessageHandler.Whole<Orchestration> {
+    public interface TalkingzOrchestrationMessageHandler extends MessageHandler.Partial<ByteBuffer> {
         void onConnectionOpen();
     }
 }

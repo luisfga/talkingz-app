@@ -173,7 +173,6 @@ public class ProfileFragment extends TalkingzAbstractRootFragment {
             userWrapper.setSearchToken(mainUser.getSearchToken());
             userWrapper.setJoinTime(mainUser.getJoinTime());
 
-            //decode thumb from file and convert to byte[] to send
             userWrapper.setThumbnail(mainUser.getThumbnail());
 
             CommandSyncUser commandSyncUser = new CommandSyncUser();

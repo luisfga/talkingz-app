@@ -3,6 +3,7 @@ package br.com.luisfga.talkingz.services.messaging.handling;
 import android.app.Application;
 import android.util.Log;
 import br.com.luisfga.talkingz.TalkingzApp;
+import br.com.luisfga.talkingz.commons.orchestration.response.CommandFindContact;
 import br.com.luisfga.talkingz.database.entity.DirectMessage;
 import br.com.luisfga.talkingz.services.messaging.MessagingWSClient;
 import br.com.luisfga.talkingz.commons.MessageWrapper;
@@ -12,22 +13,25 @@ import br.com.luisfga.talkingz.commons.orchestration.command.*;
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandFindContact;
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandGetFile;
 
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
 public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchestrationMessageHandler {
 
-    private final String TAG = TalkingzMessageHandler.class.getSimpleName();
+    private final String TAG = "TalkingzMessageHandler";
 
     private TalkingzApp talkingzApp;
     private MessagingWSClient messagingWSClient;
     private TalkingzResponseDispatcher talkingzResponseDispatcher;
+    private UserSessionPartialsBuffer userBuffer;
 
     public TalkingzMessageHandler(MessagingWSClient messagingWSClient, Application app){
         this.messagingWSClient = messagingWSClient;
         this.talkingzApp = (TalkingzApp) app;
         this.talkingzResponseDispatcher = new TalkingzResponseDispatcher();
+        this.userBuffer = new UserSessionPartialsBuffer();
     }
 
     public TalkingzResponseDispatcher getTalkingzResponseDispatcher(){
@@ -81,32 +85,79 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
     }
 
     @Override
-    public void onMessage(Orchestration orchestration) {
-        if (orchestration instanceof FeedBackCommandSend) {
-            processFeedBackCommandSend((FeedBackCommandSend) orchestration);
+    public void onMessage(ByteBuffer byteBuffer, boolean isLastFrame) {
+        Log.d(TAG,"BYTES RECEIVED (" + (isLastFrame?"last frame":"intermediate frame") + ")");
 
-        } else if (orchestration instanceof FeedBackCommandLogin) {
-            processFeedBackCommandOnLogin((FeedBackCommandLogin) orchestration);
+        byte[] frame = new byte[byteBuffer.remaining()];
+        byteBuffer.get(frame, 0, byteBuffer.remaining());
 
-        } else if (orchestration instanceof CommandDeliver) {
-            processCommandDeliver((CommandDeliver) orchestration);
+        userBuffer.appendBytes(frame);
 
-        } else if (orchestration instanceof CommandConfirmDelivery) {
-            processCommandConfirmDelivery((CommandConfirmDelivery) orchestration);
+        if (isLastFrame) {
+            Object object = userBuffer.getMessageObject();
 
-            //retorno tratado por atividade ou fragmento
-        } else if (orchestration instanceof ResponseCommandFindContact) {
-            this.talkingzResponseDispatcher.getResponseCommandFindContactHandler().handleResponse((ResponseCommandFindContact) orchestration);
+            Log.d(TAG,"DECODED OBJECT (" + object + ")");
 
-            //retorno tratado por atividade ou fragmento
-        } else if (orchestration instanceof ResponseCommandGetFile) {
-            this.talkingzResponseDispatcher.getResponseCommandGetFile().handleResponse((ResponseCommandGetFile) orchestration);
+            if (object instanceof Orchestration) {
+                Orchestration orchestration = (Orchestration) object;
 
-            //retorno meramente informativo sem relevância
-        } else if (orchestration instanceof FeedBackCommandSyncUser) {
-            Log.d( TAG, "Usuário sincronizado no servidor");
+                if (orchestration instanceof FeedBackCommandSend) {
+                    processFeedBackCommandSend((FeedBackCommandSend) orchestration);
+
+                } else if (orchestration instanceof FeedBackCommandLogin) {
+                    processFeedBackCommandOnLogin((FeedBackCommandLogin) orchestration);
+
+                } else if (orchestration instanceof CommandDeliver) {
+                    processCommandDeliver((CommandDeliver) orchestration);
+
+                } else if (orchestration instanceof CommandConfirmDelivery) {
+                    processCommandConfirmDelivery((CommandConfirmDelivery) orchestration);
+
+                    //retorno tratado por atividade ou fragmento
+                } else if (orchestration instanceof ResponseCommandFindContact) {
+                    this.talkingzResponseDispatcher.getResponseCommandFindContactHandler().handleResponse((ResponseCommandFindContact) orchestration);
+
+                    //retorno tratado por atividade ou fragmento
+                } else if (orchestration instanceof ResponseCommandGetFile) {
+                    this.talkingzResponseDispatcher.getResponseCommandGetFile().handleResponse((ResponseCommandGetFile) orchestration);
+
+                    //retorno meramente informativo sem relevância
+                } else if (orchestration instanceof FeedBackCommandSyncUser) {
+                    Log.d( TAG, "Usuário sincronizado no servidor");
+                }
+
+            }
+            userBuffer.clear();
         }
     }
+
+//    @Override
+//    public void onMessage(Orchestration orchestration) {
+//        if (orchestration instanceof FeedBackCommandSend) {
+//            processFeedBackCommandSend((FeedBackCommandSend) orchestration);
+//
+//        } else if (orchestration instanceof FeedBackCommandLogin) {
+//            processFeedBackCommandOnLogin((FeedBackCommandLogin) orchestration);
+//
+//        } else if (orchestration instanceof CommandDeliver) {
+//            processCommandDeliver((CommandDeliver) orchestration);
+//
+//        } else if (orchestration instanceof CommandConfirmDelivery) {
+//            processCommandConfirmDelivery((CommandConfirmDelivery) orchestration);
+//
+//            //retorno tratado por atividade ou fragmento
+//        } else if (orchestration instanceof ResponseCommandFindContact) {
+//            this.talkingzResponseDispatcher.getResponseCommandFindContactHandler().handleResponse((ResponseCommandFindContact) orchestration);
+//
+//            //retorno tratado por atividade ou fragmento
+//        } else if (orchestration instanceof ResponseCommandGetFile) {
+//            this.talkingzResponseDispatcher.getResponseCommandGetFile().handleResponse((ResponseCommandGetFile) orchestration);
+//
+//            //retorno meramente informativo sem relevância
+//        } else if (orchestration instanceof FeedBackCommandSyncUser) {
+//            Log.d( TAG, "Usuário sincronizado no servidor");
+//        }
+//    }
 
     /* -----------------------------------------------*/
     /* ------ MESSAGE HANDLING PRIVATE METHODS -------*/
