@@ -21,6 +21,6 @@
         app:useCompatPadding="true"
         android:backgroundTint="@color/colorPrimary"
         android:src="@drawable/ic_add_person"
-        android:tint="@color/foregroundColor"/>
+        android:tint="@color/accentColor"/>
 
 </RelativeLayout>

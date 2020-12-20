@@ -18,6 +18,12 @@
         tools:layout="@layout/fragment_profile"/>
 
     <fragment
+        android:id="@+id/nav_add_contact"
+        android:name="br.com.luisfga.talkingz.ui.AddContactFragment"
+        android:label="@string/addContact"
+        tools:layout="@layout/fragment_add_contact"/>
+
+    <fragment
         android:id="@+id/nav_settings"
         android:name="br.com.luisfga.talkingz.ui.profile.SettingsFragment"
         android:label="@string/menu_settings"

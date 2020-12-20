@@ -72,7 +72,8 @@
             android:hint="Digite aqui"
             android:inputType="textNoSuggestions|textCapSentences|textMultiLine"
             android:imeOptions="normal"
-            android:maxLines="7" />
+            android:maxLines="7"
+            android:maxLength="1000"/>
 
         <ImageButton
             android:id="@+id/attach_button"

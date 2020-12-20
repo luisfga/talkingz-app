@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +24,7 @@ import java.util.List;
 import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.database.entity.User;
 import br.com.luisfga.talkingz.database.viewmodels.ContactViewModel;
-import br.com.luisfga.talkingz.ui.AddContactActivity;
+import br.com.luisfga.talkingz.ui.AddContactFragment;
 import br.com.luisfga.talkingz.ui.TalkingzAbstractRootFragment;
 import br.com.luisfga.talkingz.utils.TouchHelperListCallback;
 
@@ -81,8 +82,7 @@ public class ContactsFragment extends TalkingzAbstractRootFragment implements To
             @Override
             public void onClick(View v) {
 
-                Intent addContactIntent = new Intent(getActivity(), AddContactActivity.class);
-                startActivity(addContactIntent);
+                Navigation.findNavController(getView()).navigate(R.id.nav_add_contact);
             }
         });
     }

@@ -50,7 +50,7 @@ public class AttachNewMediaActivity extends TalkingzAbstractRootActivity {
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_IMAGE, getTalkinzApp().getMainUser().getId().toString()); // create a file to save the image
+            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_IMAGE, getTalkingzApp().getMainUser().getId().toString()); // create a file to save the image
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
             if (intent.resolveActivity(getPackageManager()) != null) {
@@ -61,7 +61,7 @@ public class AttachNewMediaActivity extends TalkingzAbstractRootActivity {
             // create Intent to take a picture and return control to the calling application
             Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
-            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_VIDEO, getTalkinzApp().getMainUser().getId().toString()); // create a file to save the image
+            fileUri = FileUtility.getOutputMediaFileUri(getApplicationContext(), FileUtility.MEDIA_TYPE_VIDEO, getTalkingzApp().getMainUser().getId().toString()); // create a file to save the image
             intent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri); // set the image file name
 
             intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 0); // set the video image quality to low

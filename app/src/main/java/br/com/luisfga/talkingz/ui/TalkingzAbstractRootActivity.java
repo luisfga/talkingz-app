@@ -9,7 +9,7 @@ import br.com.luisfga.talkingz.TalkingzApp;
 @SuppressLint("Registered")
 public abstract class TalkingzAbstractRootActivity extends AppCompatActivity {
 
-    protected TalkingzApp getTalkinzApp(){
+    protected TalkingzApp getTalkingzApp(){
         return (TalkingzApp) getApplication();
     }
 }

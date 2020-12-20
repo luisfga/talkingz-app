@@ -3,6 +3,7 @@ package br.com.luisfga.talkingz.ui.directmessage;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,6 +30,7 @@ import br.com.luisfga.talkingz.commons.constants.Mimetype;
 
 public class DirectMessageListAdapter extends BaseAdapter {
 
+    private final String TAG = "DirectMessageListAdapter";
     private List<DirectMessage> mMessages;
     private Context context;
     private UUID userId;
@@ -123,13 +125,16 @@ public class DirectMessageListAdapter extends BaseAdapter {
                 params.setMargins(directMessageContainerMargin,directMessageContainerMargin,directMessageContainerMargin,directMessageContainerMargin);
                 directMessageContainer.setLayoutParams(params);
 
-                Drawable receivedCheck = context.getDrawable(R.drawable.ic_check_12dp);
+                Drawable receivedCheck;
                 if (currentItem.getStatus() == MessageStatus.MSG_STATUS_DELIVERED) {
-                    receivedCheck.setTint(context.getResources().getColor(R.color.vividGreen));
+                    Log.d(TAG, "Mensagem já entregue ("+position+"): " + currentItem.getContent());
+                    receivedCheck = context.getDrawable(R.drawable.ic_msg_check);
                 } else if (currentItem.getStatus() == MessageStatus.MSG_STATUS_ON_TRAFFIC) {
-                    receivedCheck.setTint(context.getResources().getColor(R.color.babyblue));
+                    Log.d(TAG, "Mensagem enviada não entregue ("+position+"): " + currentItem.getContent());
+                    receivedCheck = context.getDrawable(R.drawable.ic_msg_pend_confirm);
                 } else {
-                    receivedCheck.setTint(context.getResources().getColor(R.color.darkGray));
+                    Log.d(TAG, "Mensagem não enviada ("+position+"): " + currentItem.getContent());
+                    receivedCheck = context.getDrawable(R.drawable.ic_msg_not_sent);
                 }
                 directMessageDate.setCompoundDrawablesRelativeWithIntrinsicBounds(null,null, receivedCheck,null);
 

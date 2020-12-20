@@ -47,9 +47,6 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="br.com.luisfga.talkingz.ui.AddContactActivity"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
             android:name="br.com.luisfga.talkingz.ui.directmessage.DirectMessageActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan" />

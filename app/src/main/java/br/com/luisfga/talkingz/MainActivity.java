@@ -5,7 +5,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.widget.TextView;
-import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.services.messaging.MessagingProcessMainClass;
 import br.com.luisfga.talkingz.services.messaging.MessagingService;
 import br.com.luisfga.talkingz.services.messaging.MessagingServiceRestarterBroadcastReceiver;
@@ -46,10 +45,10 @@ public class MainActivity extends TalkingzAbstractRootActivity {
 
         //set user name on header
         TextView navHeaderUserName =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_user_name);
-        navHeaderUserName.setText(getTalkinzApp().getMainUser().getName());
+        navHeaderUserName.setText(getTalkingzApp().getMainUser().getName());
         //set user search token on header
         TextView navHeaderSearchToken =  navigationView.getHeaderView(0).findViewById(R.id.nav_header_search_token);
-        navHeaderSearchToken.setText(getTalkinzApp().getMainUser().getSearchToken());
+        navHeaderSearchToken.setText(getTalkingzApp().getMainUser().getSearchToken());
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.

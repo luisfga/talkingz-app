@@ -4,6 +4,9 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
 
+    <!-- Titles -->
+    <string name="addContact">Adicionar Contato</string>
+
     <!-- Labels -->
     <string name="name">Nome</string>
     <string name="email">E-mail</string>

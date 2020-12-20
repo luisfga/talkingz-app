@@ -91,7 +91,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
         //SET MESSAGES RECYCLER
         msgsListView = findViewById(R.id.msgs_list_view);
 
-        UUID mainUserId = getTalkinzApp().getMainUser().getId();
+        UUID mainUserId = getTalkingzApp().getMainUser().getId();
         directMessageViewModel = new ViewModelProvider(this, new DirectMessageViewModelFactory(getApplication(), contactId, mainUserId)).get(DirectMessageViewModel.class);
         DirectMessageListAdapter adapter = new DirectMessageListAdapter(this, mainUserId);
         msgsListView.setAdapter(adapter);
@@ -112,7 +112,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
         Future<User> loadingContact = AppDefaultExecutor.getTalkingzNormalPriorityThread().submit(new Callable<User>() {
             @Override
             public User call() throws Exception {
-                return getTalkinzApp().getTalkingzDB().userDAO().getById(contactId);
+                return getTalkingzApp().getTalkingzDB().userDAO().getById(contactId);
             }
         });
         try {
@@ -210,12 +210,12 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
         //#ProcessoMensagem#1 - salva a imagem no banco do cliente
         DirectMessage directMessage = new DirectMessage();
 
-        UUID mainUserId = getTalkinzApp().getMainUser().getId();
+        UUID mainUserId = getTalkingzApp().getMainUser().getId();
         UUID messageUUID = UUID.randomUUID();
 
         directMessage.setId(messageUUID);
         directMessage.setDestId(contact.getId());
-        directMessage.setSenderId(getTalkinzApp().getMainUser().getId());
+        directMessage.setSenderId(getTalkingzApp().getMainUser().getId());
         directMessage.setContent(msg);
         directMessage.setSentTime(new Timestamp(System.currentTimeMillis()));
         directMessage.setStatus(MessageStatus.MSG_STATUS_SENT);
@@ -231,7 +231,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
         Log.d(TAG,"Mensagem salva");
 
         Log.d(TAG, "Mensagem pronta para ser enviada");
-        if (getTalkinzApp().isConnectionOpen()) {
+        if (getTalkingzApp().isConnectionOpen()) {
             //montando mensagem websocket
             MessageWrapper messageWrapper = new MessageWrapper();
             messageWrapper.setId(directMessage.getId());
@@ -246,7 +246,7 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
             Log.d(TAG, "Enviando mensagem");
             CommandSend commandSend = new CommandSend();
             commandSend.setMessageWrapper(messageWrapper);
-            getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandSend);
+            getTalkingzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandSend);
 
             //enviar arquivo de mídia, se for o caso
             if (directMessage.getMediaUriPath() != null) {
@@ -267,8 +267,8 @@ public class DirectMessageActivity extends TalkingzAbstractRootActivity implemen
     void sendCommandGetFile(String downloadToken) {
         CommandGetFile commandGetFile = new CommandGetFile();
         commandGetFile.setDownloadToken(downloadToken);
-        getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandGetFile);
-        getTalkinzApp().getMessagingService().getWsClient().setResponseCommandGetFileHandler(this);
+        getTalkingzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandGetFile);
+        getTalkingzApp().getMessagingService().getWsClient().setResponseCommandGetFileHandler(this);
     }
 
     @Override

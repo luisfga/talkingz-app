@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.luisfga.talkingz.ui.profile.ProfileFragment">
+    tools:context="br.com.luisfga.talkingz.ui.profile.ProfileFragment"
+    android:padding="10dp">
 
     <ImageView
         android:id="@+id/thumbnail"
@@ -12,49 +13,6 @@
         android:src="@drawable/person_8x10"
         android:scaleType="centerCrop"
         android:contentDescription="@string/userThumbnail" />
-    <TextView
-        android:id="@+id/nameLabel"
-        android:layout_below="@id/thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/name" android:labelFor="@id/name"/>
-    <EditText
-        android:id="@+id/name"
-        android:layout_below="@id/nameLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no" />
-    <TextView
-        android:id="@+id/emailLabel"
-        android:layout_below="@id/name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/email" android:labelFor="@id/email"/>
-    <EditText
-        android:id="@+id/email"
-        android:layout_below="@id/emailLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:inputType="textEmailAddress"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no" />
-    <TextView
-        android:id="@+id/searchTokenLabel"
-        android:layout_below="@id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/searchToken" android:labelFor="@+id/searchToken"/>
-    <EditText
-        android:id="@+id/searchToken"
-        android:layout_below="@id/searchTokenLabel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textEmailAddress"
-        android:imeOptions="actionDone"
-        android:importantForAutofill="no" />
     <TextView
         android:id="@+id/joinDateLabel"
         android:layout_toEndOf="@id/thumbnail"
@@ -71,12 +29,75 @@
         android:layout_height="wrap_content"
         android:textAlignment="textEnd"/>
 
+
+    <TextView
+        android:id="@+id/nameLabel"
+        android:layout_below="@id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/name" android:labelFor="@id/name"
+        android:layout_marginTop="10dp"/>
+    <EditText
+        android:id="@+id/name"
+        android:layout_below="@id/nameLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:background="@drawable/custom_bg"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textCursorDrawable="@drawable/input_custom_cursor"/>
+    <TextView
+        android:id="@+id/emailLabel"
+        android:layout_below="@id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/email" android:labelFor="@id/email"
+        android:layout_marginTop="10dp"/>
+    <EditText
+        android:id="@+id/email"
+        android:layout_below="@id/emailLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:background="@drawable/custom_bg"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textCursorDrawable="@drawable/input_custom_cursor"/>
+    <TextView
+        android:id="@+id/searchTokenLabel"
+        android:layout_below="@id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/searchToken"
+        android:labelFor="@+id/searchToken"
+        android:layout_marginTop="10dp"/>
+    <EditText
+        android:id="@+id/searchToken"
+        android:layout_below="@id/searchTokenLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textEmailAddress"
+        android:imeOptions="actionDone"
+        android:importantForAutofill="no"
+        android:background="@drawable/custom_bg"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textCursorDrawable="@drawable/input_custom_cursor"/>
+
     <Button
         android:id="@+id/updateButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/saveAndSynchronize"
         android:textAllCaps="false"
-        android:layout_below="@id/searchToken"/>
+        android:layout_below="@id/searchToken"
+        android:layout_centerHorizontal="true"
+        android:drawableStart="@drawable/ic_save"
+        android:drawableEnd="@drawable/ic_sync"
+        android:drawablePadding="10dp"
+        android:layout_marginTop="10dp"/>
 
 </RelativeLayout>

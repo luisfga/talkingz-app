@@ -5,9 +5,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Color;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.*;
+import android.widget.TextView;
 import android.widget.Toast;
 import br.com.luisfga.talkingz.database.TalkingzClientRoomDatabase;
 import br.com.luisfga.talkingz.database.entity.User;
@@ -23,6 +27,7 @@ public class TalkingzApp extends Application  {
 
     private final String TAG = TalkingzApp.class.getSimpleName();
     private User mainUser;
+    private Handler mHandler = new Handler();
 
     @Override
     public void onCreate() {
@@ -53,6 +58,23 @@ public class TalkingzApp extends Application  {
         return this.messagingService != null && this.messagingService.isConnectionOpen();
     }
 
+    public void showToast(String message, int length){
+        mHandler.post(() -> {
+
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            View layout = inflater.inflate(R.layout.custom_toast, null);
+
+            TextView text = (TextView) layout.findViewById(R.id.toast_text);
+            text.setText(message);
+
+            Toast toast = new Toast(getApplicationContext());
+            toast.setGravity(Gravity.BOTTOM, 0, 150);
+            toast.setDuration(length);
+            toast.setView(layout);
+            toast.show();
+        });
+    }
+
     /* -----------------------------------------------*/
     /* ----------- CONFIG AND INITIALIZATION ---------*/
     /* -----------------------------------------------*/
@@ -69,8 +91,8 @@ public class TalkingzApp extends Application  {
 
             getTalkingzDB().userDAO().insert(mainUser);
 
-            Looper.prepare();
-            Toast.makeText(this, "Novo usuário criado: " + mainUser.getId().toString(), Toast.LENGTH_LONG).show();
+            showToast("Novo usuário criado: " + mainUser.getId().toString(), Toast.LENGTH_LONG);
+
         }
         Log.d(TAG, "loadUser(): User loaded? " + (mainUser != null));
     }

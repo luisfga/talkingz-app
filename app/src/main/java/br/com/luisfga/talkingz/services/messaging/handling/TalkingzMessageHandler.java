@@ -2,6 +2,7 @@ package br.com.luisfga.talkingz.services.messaging.handling;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Toast;
 import br.com.luisfga.talkingz.TalkingzApp;
 import br.com.luisfga.talkingz.commons.orchestration.response.CommandFindContact;
 import br.com.luisfga.talkingz.database.entity.DirectMessage;
@@ -45,43 +46,6 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
     public void onConnectionOpen() {
         Log.d(TAG, "onConnectionOpen");
 
-        if (talkingzApp.getMainUser() != null) {
-            //enviar pendências
-            List<DirectMessage> pendentesDeEnvio = talkingzApp.getTalkingzDB().directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
-            Log.d( TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
-            for (DirectMessage directMessage: pendentesDeEnvio) {
-
-                MessageWrapper messageWrapper = new MessageWrapper();
-
-                messageWrapper.setId(directMessage.getId());
-                messageWrapper.setSenderId(directMessage.getSenderId().toString());
-                messageWrapper.setDestId(directMessage.getDestId().toString());
-                messageWrapper.setContent(directMessage.getContent());
-                messageWrapper.setMimetype(directMessage.getMimeType());
-                messageWrapper.setDownloadToken(directMessage.getMediaDownloadToken());
-                messageWrapper.setMediaThumbnail(directMessage.getMediaThumbnail());
-
-                CommandSend commandSend = new CommandSend();
-                commandSend.setMessageWrapper(messageWrapper);
-
-                Log.d( TAG, "enviando mensagem");
-                messagingWSClient.sendCommandOrFeedBack(commandSend);
-
-                //enviar arquivo de mídia, se for o caso
-//                if (directMessage.getMediaUriPath() != null) {
-//                    AppDefaultExecutor.getOrchestraLowPriorityNetworkingThreadPool().execute(() -> {
-//                        try {
-//                            fileTransferWSClient = new FileTransferWSClient(
-//                                    FileTransferWSClient.ACTION_SEND, null,
-//                                    directMessage.getMediaUriPath(), directMessage.getMimeType(), directMessage.getMediaDownloadToken());
-//                            fileTransferWSClient.conectar(getApplicationContext());
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    });
-//                }
-            }
-        }
     }
 
     @Override
@@ -124,6 +88,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
                     //retorno meramente informativo sem relevância
                 } else if (orchestration instanceof FeedBackCommandSyncUser) {
                     Log.d( TAG, "Usuário sincronizado no servidor");
+                    talkingzApp.showToast("Usuário sincronizado no servidor", Toast.LENGTH_LONG);
                 }
 
             }
@@ -184,6 +149,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
     private void processFeedBackCommandOnLogin(FeedBackCommandLogin feedBackCommandLogin) {
         Log.d( TAG, "processFeedBackCommandOnLogin");
 
+        Log.d(TAG, "Mensagens a serem recebidas = " + feedBackCommandLogin.getPendingMessages().size());
         for (MessageWrapper messageWrapper : feedBackCommandLogin.getPendingMessages()) {
             DirectMessage directMessage = new DirectMessage();
 
@@ -208,6 +174,7 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
             this.messagingWSClient.sendCommandOrFeedBack(feedBackMessageReceived);
         }
 
+        Log.d(TAG, "Confirmações a serem realizadas = " + feedBackCommandLogin.getPendingConfirmationUUIDs().size());
         for (UUID uuid : feedBackCommandLogin.getPendingConfirmationUUIDs()) {
             this.talkingzApp.getTalkingzDB().directMessageDAO().updateMessageStatus(uuid, MessageStatus.MSG_STATUS_DELIVERED);
 
@@ -216,6 +183,45 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
 
             Log.d( TAG, "Enviando FeedBackCommandConfirmDelivery da mensagem: " + uuid);
             this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandConfirmDelivery);
+        }
+
+        Log.d(TAG, "Verificando mensagens a serem enviadas");
+        if (talkingzApp.getMainUser() != null) {
+            //enviar pendências
+            List<DirectMessage> pendentesDeEnvio = talkingzApp.getTalkingzDB().directMessageDAO().getByStatus(MessageStatus.MSG_STATUS_SENT);
+            Log.d( TAG, "Há "+pendentesDeEnvio.size()+" mensagem(ens) pendente(s) de envio");
+            for (DirectMessage directMessage: pendentesDeEnvio) {
+
+                MessageWrapper messageWrapper = new MessageWrapper();
+
+                messageWrapper.setId(directMessage.getId());
+                messageWrapper.setSenderId(directMessage.getSenderId().toString());
+                messageWrapper.setDestId(directMessage.getDestId().toString());
+                messageWrapper.setContent(directMessage.getContent());
+                messageWrapper.setMimetype(directMessage.getMimeType());
+                messageWrapper.setDownloadToken(directMessage.getMediaDownloadToken());
+                messageWrapper.setMediaThumbnail(directMessage.getMediaThumbnail());
+
+                CommandSend commandSend = new CommandSend();
+                commandSend.setMessageWrapper(messageWrapper);
+
+                Log.d( TAG, "enviando mensagem");
+                messagingWSClient.sendCommandOrFeedBack(commandSend);
+
+                //enviar arquivo de mídia, se for o caso
+//                if (directMessage.getMediaUriPath() != null) {
+//                    AppDefaultExecutor.getOrchestraLowPriorityNetworkingThreadPool().execute(() -> {
+//                        try {
+//                            fileTransferWSClient = new FileTransferWSClient(
+//                                    FileTransferWSClient.ACTION_SEND, null,
+//                                    directMessage.getMediaUriPath(), directMessage.getMimeType(), directMessage.getMediaDownloadToken());
+//                            fileTransferWSClient.conectar(getApplicationContext());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    });
+//                }
+            }
         }
     }
 

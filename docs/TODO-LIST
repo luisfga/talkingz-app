@@ -1,5 +1,35 @@
-- Função para fixar mensagens (Pin)
+Versão 0.1.008
+-- Done -- 1. Nova tela de 'Buscar Contato'
+-- Done -- 2. Nova tela de 'Perfil'
+-- Extra -- Customização dos toasts e uso de Handler
 
-- Servidor retornar configuração um configuração logo no login.
+Versão 0.1.009
+
+3. Remover contatos
+4. Remover mensagem 'on traffic', i.e., que esteja no servidor, mas ainda não foi entregue
+5. Notificação de mensagem recebida (além da notificação, mostrar ícone na lista de contatos)
+6. Configurações: opção para adicionar contato automaticamente ao receber mensagem de usuário desconhecido
+7. Mensagem na SplashScreen para os casos de demora: pós-instalação
+8. Função 'Pin' para marcar mensagens importantes e mostrá-las em nova tela
+9. Reabilitar anexação de mídias e arquivos
+10. Baixar/exibir mídias e arquivos a partir da thumbnail no chat
+
+Versão 0.1.1
+11. Grupos (Owner poderá criar, alterar, deletar o grupo e adicionar participantes)
+    *Permissões e 'officers' ficará para versão futura.
+
+Versão 0.1.2 ou 0.5 (meio caminho pra versão 1.0)
+12. Disponibilizar em 'Open Tests' na google play
+
+Versão 1.0 (Release oficial)
+
+Versão 2.0
+13. Officers e permissões nos grupos
+
+
+Versão X.Y.Z (Coisas que podem ser feitas, mas não necessariamente o serão)
+
+a. Servidor retornar configuração ao fazer login.
     Possíveis itens de configuração:
         - Frequencia de ping;
+        - Avisos;

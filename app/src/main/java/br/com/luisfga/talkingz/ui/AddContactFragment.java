@@ -1,9 +1,13 @@
 package br.com.luisfga.talkingz.ui;
 
+import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import androidx.navigation.Navigation;
 import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.database.entity.User;
 import br.com.luisfga.talkingz.database.viewmodels.ContactViewModel;
@@ -29,7 +34,7 @@ import br.com.luisfga.talkingz.commons.orchestration.response.CommandFindContact
 import br.com.luisfga.talkingz.commons.orchestration.response.ResponseCommandFindContact;
 import br.com.luisfga.talkingz.commons.orchestration.response.dispatching.ResponseHandler;
 
-public class AddContactActivity extends TalkingzAbstractRootActivity implements ResponseHandler<ResponseCommandFindContact> {
+public class AddContactFragment extends TalkingzAbstractRootFragment implements ResponseHandler<ResponseCommandFindContact> {
 
     EditText inputEditText;
     LinearLayout validationErrorPanel;
@@ -37,47 +42,69 @@ public class AddContactActivity extends TalkingzAbstractRootActivity implements 
     ImageView validationErrorImage;
 
     ProgressBar responseProgressBar;
+
+    LinearLayout responseDataGroup;
     ImageView responseIcon;
     TextView responseMessage;
+
     Button responseButton;
 
-    Button positiveButton;
-    Button negativeButton;
+    LinearLayout contactDataGroup;
+    ImageView contactThumbnail;
+    TextView contactName;
+
+    Button searchButton;
+//    Button negativeButton;
 
     ContactViewModel mContactViewModel;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_add_contact, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 
         mContactViewModel = new ViewModelProvider(this).get(ContactViewModel.class);
 
-        inputEditText = findViewById(R.id.input);
-        validationErrorPanel = findViewById(R.id.validationErrorPanel);
-        validationErrorMessage = findViewById(R.id.validationErrorMessage);
-        validationErrorImage = findViewById(R.id.validationErrorImage);
+        inputEditText = getView().findViewById(R.id.input);
+        validationErrorPanel = getView().findViewById(R.id.validationErrorPanel);
+        validationErrorMessage = getView().findViewById(R.id.validationErrorMessage);
+        validationErrorImage = getView().findViewById(R.id.validationErrorImage);
 
-        responseProgressBar = findViewById(R.id.responseProgressBar);
-        responseIcon = findViewById(R.id.responseIcon);
-        responseMessage = findViewById(R.id.responseMessage);
-        responseButton = findViewById(R.id.responseButton);
+        responseProgressBar = getView().findViewById(R.id.responseProgressBar);
 
-        positiveButton = findViewById(R.id.positiveButton);
-        positiveButton.setOnClickListener(new PositiveButtonOnClickListener());
+        responseDataGroup = getView().findViewById(R.id.responseDataGroup);
+        responseIcon = getView().findViewById(R.id.responseIcon);
+        responseMessage = getView().findViewById(R.id.responseMessage);
+        responseButton = getView().findViewById(R.id.responseButton);
 
-        negativeButton = findViewById(R.id.negativeButton);
-        negativeButton.setOnClickListener(v -> finish());
+        contactDataGroup = getView().findViewById(R.id.contactDataGroup);
+        contactThumbnail = getView().findViewById(R.id.contactThumbnail);
+        contactName = getView().findViewById(R.id.contactName);
 
-        getTalkinzApp().getMessagingService().getWsClient().setResponseCommandFindContactHandler(this);
+        searchButton = getView().findViewById(R.id.search_button);
+        searchButton.setOnClickListener(new SearchButtonOnClickListener());
+
+//        negativeButton = findViewById(R.id.negativeButton);
+//        negativeButton.setOnClickListener(v -> finish());
+
+        getTalkingzApp().getMessagingService().getWsClient().setResponseCommandFindContactHandler(this);
     }
 
     private void adicionarContato(User contact) {
         mContactViewModel.insert(contact);
-        finish();
+        Navigation.findNavController(getView()).navigate(R.id.nav_home);
     }
 
+    /*
+     * Trata resposta do servidor ao comando CommandFindContact. Essa classe implementa a interface
+     * ResponseHandler<ResponseCommandFindContact>, portanto deve ter sido registrada no MessagingWSClient
+     * com a chamada ao método 'getTalkinzApp().getMessagingService().getWsClient().setResponseCommandFindContactHandler(this);'
+     * */
     @Override
     public void handleResponse(ResponseCommandFindContact responseCommandFindContact) {
         UserWrapper userWrapper = responseCommandFindContact.getUserWrapper();
@@ -94,50 +121,61 @@ public class AddContactActivity extends TalkingzAbstractRootActivity implements 
             newContact.setMainUser(false);
 
             if(userWrapper.getThumbnail() != null) {
-                Bitmap bitmap = BitmapUtility.getBitmapFromBytes(userWrapper.getThumbnail());
                 newContact.setThumbnail(userWrapper.getThumbnail());
             }
 
-            runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 responseProgressBar.setVisibility(View.GONE);
 
                 responseIcon.setImageResource(R.drawable.ic_resp_success);
-                responseIcon.setVisibility(View.VISIBLE);
                 responseMessage.setText("Contato encontrado");
+                responseDataGroup.setVisibility(View.VISIBLE);
+
                 responseButton.setVisibility(View.VISIBLE);
-                responseButton.setText("Adicionar contato");
+                responseButton.setText(R.string.addContact);
+                Drawable iconAddPerson = getActivity().getDrawable(R.drawable.ic_add_person);
+                responseButton.setCompoundDrawablesWithIntrinsicBounds(iconAddPerson, null, null, null);
                 responseButton.setOnClickListener(v1 -> adicionarContato(newContact));
+
+                //exibir contato
+                contactThumbnail.setImageBitmap(BitmapUtility.getBitmapFromBytes(newContact.getThumbnail()));
+                contactName.setText(newContact.getName());
+                contactDataGroup.setVisibility(View.VISIBLE);
+
             });
 
         } else {
-            runOnUiThread(() -> {
+            getActivity().runOnUiThread(() -> {
                 responseProgressBar.setVisibility(View.GONE);
 
                 responseIcon.setImageResource(R.drawable.ic_resp_failure);
-                responseIcon.setVisibility(View.VISIBLE);
                 responseMessage.setText("Contato não encontrado");
+                responseDataGroup.setVisibility(View.VISIBLE);
+
                 responseButton.setVisibility(View.VISIBLE);
                 responseButton.setText("Tentar novamente");
-                responseButton.setOnClickListener(v12 -> positiveButton.performClick());
+                Drawable iconRetry = getActivity().getDrawable(R.drawable.ic_retry);
+                responseButton.setCompoundDrawablesWithIntrinsicBounds(iconRetry, null, null, null);
+                responseButton.setOnClickListener(v12 -> searchButton.performClick());
             });
         }
     }
 
-    private class PositiveButtonOnClickListener implements View.OnClickListener {
+    private class SearchButtonOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             String token = inputEditText.getText().toString();
 
             //Validação do TOKEN
-            if (!"".equals(token) && !getTalkinzApp().getMainUser().getSearchToken().equals(token)){
+            if (!"".equals(token) && !getTalkingzApp().getMainUser().getSearchToken().equals(token)){
 
-                InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(inputEditText.getWindowToken(), 0);
 
                 //verificar se o usuário já está adicionado
                 User contact;
                 Future<User> loadingContact = AppDefaultExecutor.getTalkingzBackloadMaxPriorityThread().submit(() ->
-                        getTalkinzApp().getTalkingzDB().userDAO().getByToken(token));
+                        getTalkingzApp().getTalkingzDB().userDAO().getByToken(token));
                 try {
                     contact = loadingContact.get();
                     if (contact != null) {
@@ -150,29 +188,34 @@ public class AddContactActivity extends TalkingzAbstractRootActivity implements 
                     e.printStackTrace();
                 }
 
-                if (getTalkinzApp().isConnectionOpen()) {
-                    //se não retornou significa que não há esse token na lista de contatos
+                //se não retornou no if anterior, significa que não há esse token na lista de contatos. Segue processo normal.
+                if (getTalkingzApp().isConnectionOpen()) {
+
                     validationErrorPanel.setVisibility(View.GONE);
 
                     responseProgressBar.setVisibility(View.VISIBLE);
-                    responseIcon.setVisibility(View.GONE);
+
+                    responseDataGroup.setVisibility(View.GONE);
                     responseMessage.setText("Procurando contato com o token ("+token+")");
                     responseMessage.setVisibility(View.VISIBLE);
+
                     responseButton.setVisibility(View.GONE);
+
+                    contactDataGroup.setVisibility(View.GONE);
 
                     //Busca Contato
                     CommandFindContact commandFindContact = new CommandFindContact();
                     commandFindContact.setSearchToken(token);
-                    getTalkinzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandFindContact);
+                    getTalkingzApp().getMessagingService().getWsClient().sendCommandOrFeedBack(commandFindContact);
 
                     //Aguarda retorno - tratado no método handle
 
                 } else {
-                    DialogUtility.showConnectionNotAvailableInfo(getWindow().getContext());
+                    DialogUtility.showConnectionNotAvailableInfo(getActivity().getWindow().getContext());
                 }
 
 
-            } else if (getTalkinzApp().getMainUser().getSearchToken().equals(token)) {
+            } else if (getTalkingzApp().getMainUser().getSearchToken().equals(token)) {
                 validationErrorMessage.setText("Esse é o seu token");
                 validationErrorImage.setImageResource(R.drawable.ic_resp_success);
                 validationErrorPanel.setVisibility(View.VISIBLE);
