@@ -7,6 +7,9 @@
     <!-- Titles -->
     <string name="addContact">Adicionar Contato</string>
 
+    <string name="talkingzNotificationChannel">TalkingzNotificationChannel</string>
+    <string name="talkingzNotificationDescription">Canal para notificações do Talkingz</string>
+
     <!-- Labels -->
     <string name="name">Nome</string>
     <string name="email">E-mail</string>
