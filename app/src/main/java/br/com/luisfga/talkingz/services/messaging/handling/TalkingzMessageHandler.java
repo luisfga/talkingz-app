@@ -4,8 +4,10 @@ import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 import br.com.luisfga.talkingz.TalkingzApp;
+import br.com.luisfga.talkingz.commons.constants.Mimetype;
 import br.com.luisfga.talkingz.commons.orchestration.response.CommandFindContact;
 import br.com.luisfga.talkingz.database.entity.DirectMessage;
+import br.com.luisfga.talkingz.database.entity.User;
 import br.com.luisfga.talkingz.services.messaging.MessagingWSClient;
 import br.com.luisfga.talkingz.commons.MessageWrapper;
 import br.com.luisfga.talkingz.commons.constants.MessageStatus;
@@ -248,6 +250,17 @@ public class TalkingzMessageHandler implements MessagingWSClient.TalkingzOrchest
         feedBackCommandDeliver.setId(directMessage.getId());
         this.messagingWSClient.sendCommandOrFeedBack(feedBackCommandDeliver);
         Log.d( TAG, "Enviando feedBackCommandDeliver da mensagem: " + directMessage.getId());
+
+        //notificação
+        //TODO colocar o nome do usuário no wrapper da mensagem ou usar a entidade USER ao invés do uuid
+        User sender = talkingzApp.getTalkingzDB().userDAO().getById(directMessage.getSenderId());
+        String content = null;
+        if (!directMessage.getContent().isEmpty()){
+            content = directMessage.getContent();
+        } else {
+            content = directMessage.getMimeType() == Mimetype.IMAGE_GENERIC? "Imagem":"Vídeo";
+        }
+        talkingzApp.postNewMessageNotification(sender.getName(), content);
     }
 
 }

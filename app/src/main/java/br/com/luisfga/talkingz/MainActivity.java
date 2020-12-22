@@ -89,6 +89,7 @@ public class MainActivity extends TalkingzAbstractRootActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        getTalkingzApp().clearNotifications();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
             MessagingServiceRestarterBroadcastReceiver.scheduleJob(getApplicationContext());
         } else {
