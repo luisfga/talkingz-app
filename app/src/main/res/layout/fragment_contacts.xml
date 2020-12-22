@@ -13,6 +13,18 @@
         android:scrollbars="vertical"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/removeContacts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@id/addContact"
+        app:useCompatPadding="true"
+        android:backgroundTint="@color/darkGray"
+        android:src="@drawable/ic_trash"
+        android:tint="@color/red"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addContact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

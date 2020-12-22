@@ -26,12 +26,11 @@ import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.database.viewmodels.GroupViewModel;
 import br.com.luisfga.talkingz.database.entity.Group;
 import br.com.luisfga.talkingz.ui.TalkingzAbstractRootFragment;
-import br.com.luisfga.talkingz.utils.TouchHelperListCallback;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class GroupsFragment extends TalkingzAbstractRootFragment implements TouchHelperListCallback.ItemTouchHelperCallbackListener {
+public class GroupsFragment extends TalkingzAbstractRootFragment {
 
     private RecyclerView myRecyclerView;
     private GroupViewModel mGroupViewModel;
@@ -60,13 +59,6 @@ public class GroupsFragment extends TalkingzAbstractRootFragment implements Touc
         GroupsRecyclerAdapter adapter = new GroupsRecyclerAdapter(getActivity());
         myRecyclerView.setAdapter(adapter);
 
-        // adding item touch helper
-        // only ItemTouchHelper.LEFT added to detect Right to Left swipe
-        // if you want both Right -> Left and Left -> Right
-        // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
-        ItemTouchHelper.SimpleCallback ithSimpleCallback = new TouchHelperListCallback(0, ItemTouchHelper.LEFT, this); //this <listener> impl attaches with the callback
-        new ItemTouchHelper(ithSimpleCallback).attachToRecyclerView(myRecyclerView); //helper attaches the callback with recyclerView.
-
         //itemModelView's list will be observed to refresh the adapter's list
         mGroupViewModel.getAllGroups().observe(getActivity(), new Observer<List<Group>>() {
             @Override
@@ -85,63 +77,5 @@ public class GroupsFragment extends TalkingzAbstractRootFragment implements Touc
 //                startActivity(addContactIntent);
             }
         });
-    }
-
-    /**
-     * callback when recycler view is swiped
-     * item will be removed on swiped
-     * confirmation will be shown in a AlertDialog
-     */
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
-
-        Log.d( "GroupsFragment", "onSwiped Fired!");
-
-        if (viewHolder instanceof GroupsRecyclerAdapter.ListItemViewHolder) {
-
-            GroupsRecyclerAdapter.ListItemViewHolder itemViewHolder = (GroupsRecyclerAdapter.ListItemViewHolder) viewHolder;
-            GroupsRecyclerAdapter adapter = (GroupsRecyclerAdapter) myRecyclerView.getAdapter();
-            Group group = adapter.getItem(position);
-
-            //remotion only from adapter
-            adapter.removeItem(position);
-
-            confirmDeletion(position, adapter, group);
-        }
-    }
-
-    private void confirmDeletion(int position, GroupsRecyclerAdapter adapter, Group group) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Excluir permanenmente?");
-        // Add the buttons
-        builder.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //remotion from database
-                mGroupViewModel.delete(group);
-            }
-        });
-        builder.setNegativeButton("Desfazer", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                //restoring removed item due the cancelation
-                adapter.restoreItem(group, position);
-                myRecyclerView.scrollToPosition(position);
-            }
-        });
-
-        //TODO usado apenas para esconder a UI - procurar um solução melhor
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                //hide ui
-//                AppUtility.hideSystemUI((TabsActivity) getActivity());
-            }
-        });
-
-        // Set other dialog properties
-        builder.setCancelable(false);
-
-        // Create and Show the AlertDialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
     }
 }

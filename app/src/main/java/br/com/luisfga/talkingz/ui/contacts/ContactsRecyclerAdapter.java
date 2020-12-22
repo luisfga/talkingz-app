@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +16,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable;
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.List;
+import java.util.*;
 
 import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.database.entity.User;
@@ -25,14 +26,19 @@ import br.com.luisfga.talkingz.utils.BitmapUtility;
 
 public class ContactsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = "ContactsRecyclerAdapter";
+
     private final LayoutInflater inflater;
     private List<User> mItems;
     private Context context;
+    private View removeContactsButton;
+    private Map<User, View> selectedItems = new HashMap<>();
 
     // XXXXXXXXXXXXX CONSTRUCTOR
     // Provide a suitable constructor (depends on the kind of dataset)
-    ContactsRecyclerAdapter(Context context) {
+    ContactsRecyclerAdapter(Context context, View removeContactsButton) {
         this.context = context;
+        this.removeContactsButton = removeContactsButton;
         this.inflater = LayoutInflater.from(context);
     }
 
@@ -67,6 +73,21 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         notifyItemInserted(position);
     }
 
+    Set<User> getSelecteds(){
+//        mItems.removeAll(selectedItems);
+//        notifyDataSetChanged();
+//        removeContactsButton.setVisibility(View.GONE);
+        return selectedItems.keySet();
+    }
+    void unsetSelection(User user){
+        View view = selectedItems.get(user);
+        view.setSelected(false);
+        selectedItems.remove(user);
+        if(selectedItems.size() == 0) {
+            removeContactsButton.setVisibility(View.GONE);
+        }
+    }
+
     // XXXXXXXXXXXXXX OVERRIDING IMPLEMENTATIONS
     // Create new views (invoked by the layout manager)
     @NonNull
@@ -75,6 +96,8 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         View layout = inflater.inflate(R.layout.fragment_contacts_list_item, parent, false);
         return new ContactsRecyclerAdapter.ListItemViewHolder(layout);
     }
+
+
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
@@ -85,9 +108,26 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             User currentItem = mItems.get(position);
 
             holder.itemView.setOnClickListener(v -> {
-                Intent chatIntent = new Intent(context, DirectMessageActivity.class);
-                chatIntent.putExtra(DirectMessageActivity.CONTACT_ID_KEY, currentItem.getId().toString());
-                context.startActivity(chatIntent);
+                if (holder.itemView.isSelected()) {
+                    unsetSelection(currentItem);
+
+                } else {
+                    Intent chatIntent = new Intent(context, DirectMessageActivity.class);
+                    chatIntent.putExtra(DirectMessageActivity.CONTACT_ID_KEY, currentItem.getId().toString());
+                    context.startActivity(chatIntent);
+                }
+            });
+            holder.itemView.setOnLongClickListener(v -> {
+                holder.itemView.setSelected(!holder.itemView.isSelected());
+
+                boolean isSelected = holder.itemView.isSelected();
+                if (isSelected) {
+                    selectedItems.put(currentItem, holder.itemView);
+                    removeContactsButton.setVisibility(View.VISIBLE);
+                } else {
+                    unsetSelection(currentItem);
+                }
+                return true;
             });
 
             if (currentItem.getThumbnail() != null) {

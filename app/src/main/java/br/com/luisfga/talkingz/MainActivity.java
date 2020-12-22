@@ -1,9 +1,11 @@
 package br.com.luisfga.talkingz;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import br.com.luisfga.talkingz.services.messaging.MessagingProcessMainClass;
 import br.com.luisfga.talkingz.services.messaging.MessagingService;
@@ -96,5 +98,7 @@ public class MainActivity extends TalkingzAbstractRootActivity {
             MessagingProcessMainClass bck = new MessagingProcessMainClass();
             bck.launchService(getApplicationContext(), MessagingService.class);
         }
+        //forçando esconder o teclado, pois estava aparecendo ao voltar da tela de conversa
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
     }
 }

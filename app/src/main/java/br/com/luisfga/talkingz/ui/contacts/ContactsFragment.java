@@ -1,11 +1,10 @@
 package br.com.luisfga.talkingz.ui.contacts;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,22 +15,21 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.List;
-
 import br.com.luisfga.talkingz.R;
 import br.com.luisfga.talkingz.database.entity.User;
 import br.com.luisfga.talkingz.database.viewmodels.ContactViewModel;
-import br.com.luisfga.talkingz.ui.AddContactFragment;
 import br.com.luisfga.talkingz.ui.TalkingzAbstractRootFragment;
-import br.com.luisfga.talkingz.utils.TouchHelperListCallback;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ContactsFragment extends TalkingzAbstractRootFragment implements TouchHelperListCallback.ItemTouchHelperCallbackListener {
+public class ContactsFragment extends TalkingzAbstractRootFragment {
+
+    private static final String TAG = "ContactsFragment";
 
     private RecyclerView myRecyclerView;
     private ContactViewModel mContactViewModel;
@@ -58,22 +56,30 @@ public class ContactsFragment extends TalkingzAbstractRootFragment implements To
 
         myRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        ContactsRecyclerAdapter adapter = new ContactsRecyclerAdapter(getActivity());
+        //se houver mais opções, colocar o FloatButton em uma ViewGroup junto com as outras opções
+        FloatingActionButton removeContactsButton = view.findViewById(R.id.removeContacts);
+        ContactsRecyclerAdapter adapter = new ContactsRecyclerAdapter(getActivity(), removeContactsButton);
         myRecyclerView.setAdapter(adapter);
-
-        // adding item touch helper
-        // only ItemTouchHelper.LEFT added to detect Right to Left swipe
-        // if you want both Right -> Left and Left -> Right
-        // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
-        ItemTouchHelper.SimpleCallback ithSimpleCallback = new TouchHelperListCallback(0, 0, this); //this <listener> impl attaches with the callback
-        new ItemTouchHelper(ithSimpleCallback).attachToRecyclerView(myRecyclerView); //helper attaches the callback with recyclerView.
+        removeContactsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG,"Remover contatos selecionados! View: " + v);
+                Set<User> removeds = adapter.getSelecteds();
+                for (User user : removeds) {
+                    mContactViewModel.delete(user);
+                    //unset selection
+                    adapter.unsetSelection(user);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
 
         //itemModelView's list will be observed to refresh the adapter's list
         mContactViewModel.getAllContact().observe(getActivity(), new Observer<List<User>>() {
             @Override
-            public void onChanged(List<User> contact) {
+            public void onChanged(List<User> contacts) {
                 //refresh list fragment
-                adapter.setItems(contact);
+                adapter.setItems(contacts);
             }
         });
 
@@ -81,19 +87,10 @@ public class ContactsFragment extends TalkingzAbstractRootFragment implements To
         addContactButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Navigation.findNavController(getView()).navigate(R.id.nav_add_contact);
             }
         });
-    }
-
-    /**
-     * callback when recycler view is swiped
-     * item will be removed on swiped
-     * confirmation will be shown in a AlertDialog
-     */
-    @Override
-    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
 
     }
+
 }

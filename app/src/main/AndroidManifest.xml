@@ -35,7 +35,8 @@
         <activity
             android:name="br.com.luisfga.talkingz.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen">
+            android:theme="@style/AppTheme.NoActionBar.FullScreen"
+            android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
